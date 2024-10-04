@@ -77,7 +77,7 @@ fun NotesApp(
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() }
             )
-            SearchBar(R.string.search_note_placeholder.toString(), {})
+            SearchBar(stringResource(R.string.search_note_placeholder), {})
         }
     ) { innerPadding ->
         NavHost(
