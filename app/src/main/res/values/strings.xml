@@ -1,3 +1,37 @@
 <resources>
-    <string name="app_name">MyNotes</string>
+    <!-- App name -->
+    <string name="app_name">My Notes App</string>
+
+    <!-- Screens Titles -->
+    <string name="notes">Mis Notas</string>
+    <string name="create_note">Nueva Nota</string>
+    <string name="edit_note">Editar Nota</string>
+    <string name="tasks">Mis Tareas</string>
+    <string name="create_task">Nueva Tarea</string>
+    <string name="edit_task">Editar Tarea</string>
+
+    <!-- Button Labels -->
+    <string name="add_note">Nueva Nota</string>
+    <string name="add_task">Nueva Tarea</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+
+    <!-- Search Bar -->
+    <string name="search_note_placeholder">Buscar Nota</string>
+    <string name="search_task_placeholder">Buscar Tarea</string>
+
+    <!-- Task-specific Strings -->
+    <string name="set_reminder">Establecer Recordatorio</string>
+    <string name="due_date">Fecha límite</string>
+
+    <!-- Confirmation messages -->
+    <string name="task_saved">Tarea Guardada</string>
+    <string name="note_saved">Nota Guardada</string>
+
+    <!-- Errors and Warnings -->
+    <string name="delete_confirmation">¿Estás seguro de querer hacerlo?</string>
+    <string name="error_onDelete_note">Error al eliminar la nota</string>
+    <string name="error_onDelete_task">Error al eliminar la tarea</string>
 </resources>
