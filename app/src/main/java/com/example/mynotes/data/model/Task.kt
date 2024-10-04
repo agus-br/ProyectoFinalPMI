@@ -6,5 +6,5 @@ data class Task(
     val description: String,
     val content: String,
     val dueDate: String?,  // La fecha límite es opcional
-    val reminder: Boolean  // Puede tener recordatorios, por eso boolean
+    val reminder: Long
 )
