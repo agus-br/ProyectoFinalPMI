@@ -5,12 +5,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
-import com.example.mynotes.data.DataSource
-import com.example.mynotes.data.OrderUiState
-import com.example.mynotes.ui.NotesAppViewModel
-import com.example.mynotes.ui.StartNotesScreen
-import com.example.mynotes.ui.NoteScreen
-import com.example.mynotes.ui.TaskScreen
+import com.example.mynotes.ui.viewmodel.NotesAppViewModel
+
+enum class NoteScreens(@StringRes val title: Int) {
+    Home(title = R.string.app_name),
+    CreateNote(title = R.string.create_note),
+    EditNote(title = R.string.edit_note),
+    NoteDetail(title = R.string.note_detail)
+}
+
 
 @Composable
 fun NotesAppBar(
