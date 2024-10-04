@@ -22,8 +22,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mynotes.ui.components.SearchBar
 
-import com.example.mynotes.ui.viewmodel.MyNoteAppViewModel
+import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 
 enum class NoteScreens(@StringRes val title: Int) {
     HomeNotes(title = R.string.notes),  // Pantalla principal donde se muestran todas las notas
@@ -61,7 +62,7 @@ fun NotesAppBar(
 
 @Composable
 fun NotesApp(
-    viewModel: NotesAppViewModel = viewModel(),
+    viewModel: MyNotesAppViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -76,6 +77,7 @@ fun NotesApp(
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() }
             )
+            SearchBar(R.string.search_note_placeholder.toString(), {})
         }
     ) { innerPadding ->
         NavHost(
