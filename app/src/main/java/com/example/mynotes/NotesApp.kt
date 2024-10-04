@@ -3,10 +3,18 @@ package com.example.mynotes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 
-import com.example.mynotes.ui.viewmodel.NotesAppViewModel
+import com.example.mynotes.ui.viewmodel.MyNoteAppViewModel
 
 enum class NoteScreens(@StringRes val title: Int) {
     HomeNotes(title = R.string.notes),  // Pantalla principal donde se muestran todas las notas
@@ -18,18 +26,33 @@ enum class NoteScreens(@StringRes val title: Int) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesAppBar(
+    currentScreen: NoteScreens,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
+    TopAppBar(
+        title = { Text(stringResource(id = currentScreen.title)) },
+        modifier = modifier,
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Composable
 fun NotesApp(
-    viewModel: NotesAppViewModel = viewModel(),
+    viewModel: MyNoteAppViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
 

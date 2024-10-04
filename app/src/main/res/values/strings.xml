@@ -17,6 +17,7 @@
     <string name="cancel">Cancelar</string>
     <string name="delete">Eliminar</string>
     <string name="edit">Editar</string>
+    <string name="back_button">Atrás</string>
 
     <!-- Search Bar -->
     <string name="search_note_placeholder">Buscar Nota</string>
