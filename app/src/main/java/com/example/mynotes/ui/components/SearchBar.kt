@@ -1,6 +1,7 @@
 package com.example.mynotes.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -14,6 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.contentColorFor
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 
 @Composable
@@ -34,6 +38,16 @@ fun SearchBar(
             // Texto de marcador de posición
             Text(placeHolder)
         },
-        modifier = Modifier.fillMaxWidth(), // Se expande para llenar el ancho
+        leadingIcon = {
+            // Icono de búsqueda
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Buscar",
+                tint = Color.Gray // Color del icono
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     )
 }
