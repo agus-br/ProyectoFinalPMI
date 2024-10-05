@@ -26,8 +26,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.mynotes.ui.components.ControlsBottonBar
 import com.example.mynotes.ui.components.MainBottomNavBar
 import com.example.mynotes.ui.components.SearchBar
+import com.example.mynotes.ui.screens.notes.NoteListScreen
 
 import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
+
+
+data class NoteItemData(val title: String, val description: String, val content: String)
+
+val notes = listOf(
+    NoteItemData("Título 1", "Breve descripción", "Este es el contenido extenso de la nota..."),
+    NoteItemData("Título 2", "Otra descripción", "Otro contenido extenso..."),
+    NoteItemData("Título 3", "Otra descripción", "Otro contenido extenso..."),
+    NoteItemData("Título 4", "Otra descripción", "Otro contenido extenso..."),
+    NoteItemData("Título 5", "Otra descripción", "Otro contenido extenso...")
+)
+
+
 
 enum class NoteScreens(@StringRes val title: Int) {
     HomeNotes(title = R.string.notes),  // Pantalla principal donde se muestran todas las notas
@@ -74,7 +88,7 @@ fun TopBarWithSearch(
     searchPlaceholder: String,
     searchQuery: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(0.dp)) {
         NotesAppBar(
             currentScreen = currentScreen,
             canNavigateBack = canNavigateBack,
@@ -140,7 +154,7 @@ fun NotesApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = NoteScreens.HomeNotes.name) {
-                // Aquí cargarás tu pantalla de HomeNotes
+                NoteListScreen(notes)
             }
             composable(route = NoteScreens.CreateNote.name) {
                 // Pantalla de creación de nota
