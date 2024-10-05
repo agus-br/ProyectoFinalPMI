@@ -10,9 +10,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.NoteItemData
+import com.example.mynotes.data.NoteItemData
 import com.example.mynotes.ui.components.NoteItem
-
 
 @Composable
 fun NoteListScreen(
