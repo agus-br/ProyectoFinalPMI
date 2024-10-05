@@ -30,18 +30,10 @@ import com.example.mynotes.ui.screens.notes.NoteListScreen
 
 import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 
-
-data class NoteItemData(val title: String, val description: String, val content: String)
-
-val notes = listOf(
-    NoteItemData("Título 1", "Breve descripción", "Este es el contenido extenso de la nota..."),
-    NoteItemData("Título 2", "Otra descripción", "Otro contenido extenso..."),
-    NoteItemData("Título 3", "Otra descripción", "Otro contenido extenso..."),
-    NoteItemData("Título 4", "Otra descripción", "Otro contenido extenso..."),
-    NoteItemData("Título 5", "Otra descripción", "Otro contenido extenso...")
-)
-
-
+// Importación de los datos de ejemplo
+import com.example.mynotes.data.notes
+import com.example.mynotes.data.tasks
+import com.example.mynotes.ui.screens.tasks.TaskListScreen
 
 enum class NoteScreens(@StringRes val title: Int) {
     HomeNotes(title = R.string.notes),  // Pantalla principal donde se muestran todas las notas
@@ -163,7 +155,7 @@ fun NotesApp(
                 // Pantalla de edición de nota
             }
             composable(route = NoteScreens.HomeTasks.name) {
-                // Pantalla principal para las tareas
+                TaskListScreen(tasks)
             }
             composable(route = NoteScreens.CreateTask.name) {
                 // Pantalla para crear una nueva tarea

@@ -11,14 +11,13 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun ControlsBottonBar(
-
 ) {
     BottomAppBar(
         actions = {
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(onClick = {}) {
                 Icon(Icons.Filled.Check, contentDescription = "Localized description")
             }
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(onClick = {}) {
                 Icon(
                     Icons.Filled.Edit,
                     contentDescription = "Localized description",
