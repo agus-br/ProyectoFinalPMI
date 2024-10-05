@@ -5,8 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import com.example.mynotes.data.model.Note
 
-class NotesViewModel(
-) : ViewModel() {
+class NotesViewModel() : ViewModel() {
 
     // Estado para las notas
     private val _notes = mutableStateOf<List<Note>>(emptyList())
