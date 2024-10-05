@@ -15,20 +15,23 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     placeHolder: String,
-    onSearch: (String) -> Unit // lambda para indicar su acción
+    onSearch: (String) -> Unit, // lambda para indicar su acción
+    modifier: Modifier = Modifier
 ) {
     // Estado para almacenar el texto de búsqueda
     var searchText by remember { mutableStateOf("") }
 
-    TextField(
+    OutlinedTextField(
         value = searchText,
         onValueChange = {
             searchText = it // Actualiza el texto de búsqueda
@@ -46,8 +49,10 @@ fun SearchBar(
                 tint = Color.Gray // Color del icono
             )
         },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        modifier = modifier,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Color.Gray,
+            unfocusedBorderColor = Color.LightGray
+        )
     )
 }
