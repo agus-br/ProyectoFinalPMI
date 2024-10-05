@@ -1,6 +1,10 @@
 package com.example.mynotes
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,10 +22,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mynotes.ui.components.ControlsBottonBar
+import com.example.mynotes.ui.components.MainBottomNavBar
 import com.example.mynotes.ui.components.SearchBar
 
 import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
@@ -45,7 +52,10 @@ fun NotesAppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(stringResource(id = currentScreen.title)) },
+        title = {
+            Text(
+                stringResource(id = currentScreen.title)
+            ) },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
@@ -61,6 +71,32 @@ fun NotesAppBar(
 }
 
 @Composable
+fun TopBarWithSearch(
+    currentScreen: NoteScreens,
+    canNavigateBack: Boolean,
+    navigateUp: () -> Unit,
+    searchPlaceholder: String,
+    searchQuery: (String) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        NotesAppBar(
+            currentScreen = currentScreen,
+            canNavigateBack = canNavigateBack,
+            navigateUp = navigateUp,
+            modifier = Modifier.padding(bottom = 0.dp)
+        )
+        SearchBar(
+            searchPlaceholder,
+            searchQuery,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .padding(top = 0.dp)
+        )
+    }
+}
+
+@Composable
 fun NotesApp(
     viewModel: MyNotesAppViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
@@ -72,13 +108,35 @@ fun NotesApp(
 
     Scaffold(
         topBar = {
-            NotesAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
-            )
-            SearchBar(stringResource(R.string.search_note_placeholder), {})
+            TopBarWithSearch(
+                currentScreen,
+                navController.previousBackStackEntry != null,
+                { navController.navigateUp() },
+                stringResource(R.string.search_note_placeholder),
+                {})
+        },
+        bottomBar = {
+            when (navController.currentDestination?.route) {
+                in listOf(NoteScreens.CreateNote.name, NoteScreens.EditNote.name) -> {
+                    // Estamos en una pantalla de crear o editar nota
+                    ControlsBottonBar(
+                    )
+                }
+                in listOf(NoteScreens.CreateTask.name, NoteScreens.EditTask.name) -> {
+                    // Estamos en una pantalla de crear o editar tarea
+                    ControlsBottonBar(
+                    )
+                }
+                else -> {
+                    // Pantallas de inicio o cualquier otra pantalla
+                    MainBottomNavBar(
+                        onNotesClick = { navController.navigate(NoteScreens.HomeNotes.name) },
+                        onTasksClick = { navController.navigate(NoteScreens.HomeTasks.name) }
+                    )
+                }
+            }
         }
+
     ) { innerPadding ->
         NavHost(
             navController = navController,
