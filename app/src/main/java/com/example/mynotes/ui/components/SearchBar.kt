@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -50,9 +51,9 @@ fun SearchBar(
             )
         },
         modifier = modifier,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Gray,
-            unfocusedBorderColor = Color.LightGray
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Color.Gray,
+            unfocusedTextColor = Color.LightGray
         )
     )
 }
