@@ -41,6 +41,7 @@ import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 import com.example.mynotes.data.notes
 import com.example.mynotes.data.tasks
 import com.example.mynotes.ui.screens.notes.AddEditNoteScreen
+import com.example.mynotes.ui.screens.tasks.AddEditTaskScreen
 import com.example.mynotes.ui.screens.tasks.TaskListScreen
 
 enum class NoteScreens(@StringRes val title: Int) {
@@ -115,7 +116,7 @@ fun NotesApp(
     val currentScreen = NoteScreens.valueOf(
         backStackEntry?.destination?.route ?: NoteScreens.HomeNotes.name
     )
-    var selectedNote by remember { mutableIntStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -193,20 +194,37 @@ fun NotesApp(
             }
             composable(route = NoteScreens.EditNote.name) {
                 AddEditNoteScreen(
-                    note = notes[selectedNote],
+                    note = notes[selectedItem],
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                 )
             }
             composable(route = NoteScreens.HomeTasks.name) {
-                TaskListScreen(tasks)
+                TaskListScreen(
+                    tasks = tasks,
+                    onTaksClick = {
+                        navController.navigate(NoteScreens.EditTask.name)
+                    },
+                    onTaskLongClick = {},
+                    onCheckedChanged = {}
+                )
             }
             composable(route = NoteScreens.CreateTask.name) {
-                // Pantalla para crear una nueva tarea
+                AddEditTaskScreen(
+                    task = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
             composable(route = NoteScreens.EditTask.name) {
-                // Pantalla de edición de tareas
+                AddEditTaskScreen(
+                    task = tasks[selectedItem],
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
         }
     }

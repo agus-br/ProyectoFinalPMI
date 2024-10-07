@@ -1,12 +1,19 @@
 package com.example.mynotes.ui.screens.notes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -38,43 +45,66 @@ fun AddEditNoteScreen(
     var content by remember { mutableStateOf(note?.content ?: "") }
 
     Column (
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier
     ) {
         // Título de la nota
         OutlinedTextField(
             value = title,
+            textStyle = MaterialTheme.typography.titleLarge,
             onValueChange = { title = it },
             placeholder = {
                 Text(stringResource(R.string.title))
             },
+            modifier = Modifier
+                .fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedTextColor = Color.Black,
+                focusedTextColor = Color.Black,
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent
             )
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth() // Ancho completo de la pantalla o contenedor
+                .height(2.dp) // Grosor de la línea
+                .background(Color.Gray) // Color de la línea
+                .padding(horizontal = 8.dp)
         )
 
         // Descripción de la nota
         OutlinedTextField(
             value = description,
+            textStyle = MaterialTheme.typography.titleSmall,
             onValueChange = { description = it },
             placeholder = {
-                Text(stringResource(R.string.description))
+                Text(
+                    stringResource(R.string.description)
+                )
             },
+            modifier = Modifier
+                .fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedTextColor = Color.Gray,
+                focusedTextColor = Color.Gray,
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent
             )
         )
-
         // Contenido de la nota
         OutlinedTextField(
             value = content,
+            textStyle = MaterialTheme.typography.titleMedium,
             onValueChange = { content = it },
             placeholder = {
                 Text(stringResource(R.string.content))
             },
+            modifier = Modifier
+                .fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedTextColor = Color.Black,
+                focusedTextColor = Color.Black,
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent
             )

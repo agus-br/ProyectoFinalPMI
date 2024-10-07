@@ -14,7 +14,10 @@ import com.example.mynotes.ui.components.TaskItem
 
 @Composable
 fun TaskListScreen(
-    tasks: List<Task>
+    tasks: List<Task>,
+    onTaksClick: () -> Unit,
+    onTaskLongClick: () -> Unit,
+    onCheckedChanged: (Boolean) -> Unit
 ) {
 
     // Uso de LazyColumn para mostrar las tareas en una sola columna
@@ -32,9 +35,9 @@ fun TaskListScreen(
                 content = task.content,
                 state = task.state,
                 completed = task.completed,
-                onClick = {},
-                onLongClick = {},
-                onCheckedChange = {}
+                onClick = onTaksClick,
+                onLongClick = onTaskLongClick,
+                onCheckedChange = onCheckedChanged
             )
         }
     }
