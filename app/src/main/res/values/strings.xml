@@ -10,6 +10,11 @@
     <string name="create_task">Nueva Tarea</string>
     <string name="edit_task">Editar Tarea</string>
 
+    <!-- Common Placeholders -->
+    <string name="title">Título</string>
+    <string name="description">Descripción</string>
+    <string name="content">Escribe tu nota aquí…</string>
+
     <!-- Button Labels -->
     <string name="add_note">Nueva Nota</string>
     <string name="add_task">Nueva Tarea</string>

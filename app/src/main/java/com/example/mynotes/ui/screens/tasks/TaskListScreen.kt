@@ -9,12 +9,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.data.TaskItemData
+import com.example.mynotes.data.model.Task
 import com.example.mynotes.ui.components.TaskItem
 
 @Composable
 fun TaskListScreen(
-    tasks: List<TaskItemData>
+    tasks: List<Task>
 ) {
 
     // Uso de LazyColumn para mostrar las tareas en una sola columna

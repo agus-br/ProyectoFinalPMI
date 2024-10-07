@@ -10,12 +10,14 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.data.NoteItemData
+import com.example.mynotes.data.model.Note
 import com.example.mynotes.ui.components.NoteItem
 
 @Composable
 fun NoteListScreen(
-    notes: List<NoteItemData>
+    notes: List<Note>,
+    onNoteClick: () -> Unit,
+    onNoteLongClick: () -> Unit
 ) {
 
     // Uso de LazyVerticalGrid para mostrar las notas en dos columnas
@@ -33,8 +35,8 @@ fun NoteListScreen(
                 title = note.title,
                 description = note.description,
                 content = note.content,
-                onClick = {},
-                onLongClick = {}
+                onClick = onNoteClick,
+                onLongClick = onNoteLongClick
             )
         }
     }
