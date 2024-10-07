@@ -5,6 +5,10 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,6 +27,9 @@ fun TaskItem(
     onLongClick: () -> Unit, // Acción al dejar presionado la tarea
     onCheckedChange: (Boolean) -> Unit // Callback cuando se cambia el estado del checkbox
 ) {
+
+    var checked by remember { mutableStateOf(completed) }
+
     // Contenedor que ajusta el tamaño vertical según el contenido
     Card(
         modifier = modifier
@@ -44,8 +51,11 @@ fun TaskItem(
         ) {
             // Checkbox para marcar como completada o no
             Checkbox(
-                checked = completed, // Estado del checkbox
-                onCheckedChange = onCheckedChange // Callback cuando cambia el estado
+                checked = checked, // Estado del checkbox
+                onCheckedChange = {
+                    if (checked) checked = false
+                    else checked = true
+                } // Callback cuando cambia el estado
             )
 
             // Columna con el contenido de la tarea (título, descripción, contenido)
