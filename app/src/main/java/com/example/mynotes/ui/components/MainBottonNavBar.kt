@@ -19,11 +19,14 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun MainBottomNavBar(
     onNotesClick: () -> Unit,
-    onTasksClick: () -> Unit
+    onTasksClick: () -> Unit,
+    onNewNoteClick: () -> Unit
 ) {
     BottomAppBar(
         actions = {
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 IconButton(
                     onClick = onNotesClick,
                     modifier = Modifier.weight(1f) // Espaciado uniforme
@@ -46,7 +49,7 @@ fun MainBottomNavBar(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* do something */ },
+                onClick = onNewNoteClick,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
             ) {

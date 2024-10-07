@@ -1,7 +1,9 @@
 package com.example.mynotes
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,11 +20,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mynotes.data.model.Note
 import com.example.mynotes.ui.components.ControlsBottonBar
 import com.example.mynotes.ui.components.MainBottomNavBar
 import com.example.mynotes.ui.components.SearchBar
@@ -33,6 +40,7 @@ import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 // Importación de los datos de ejemplo
 import com.example.mynotes.data.notes
 import com.example.mynotes.data.tasks
+import com.example.mynotes.ui.screens.notes.AddEditNoteScreen
 import com.example.mynotes.ui.screens.tasks.TaskListScreen
 
 enum class NoteScreens(@StringRes val title: Int) {
@@ -107,15 +115,36 @@ fun NotesApp(
     val currentScreen = NoteScreens.valueOf(
         backStackEntry?.destination?.route ?: NoteScreens.HomeNotes.name
     )
+    var selectedNote by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
-            TopBarWithSearch(
-                currentScreen,
-                navController.previousBackStackEntry != null,
-                { navController.navigateUp() },
-                stringResource(R.string.search_note_placeholder),
-                {})
+            when (navController.currentDestination?.route) {
+                in listOf(NoteScreens.CreateNote.name, NoteScreens.EditNote.name) -> {
+                    NotesAppBar(
+                        currentScreen = currentScreen,
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        navigateUp = { navController.navigateUp() },
+                        modifier = Modifier.padding(bottom = 0.dp)
+                    )
+                }
+                in listOf(NoteScreens.CreateTask.name, NoteScreens.EditTask.name) -> {
+                    NotesAppBar(
+                        currentScreen = currentScreen,
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        navigateUp = { navController.navigateUp() },
+                        modifier = Modifier.padding(bottom = 0.dp)
+                    )
+                }
+                else -> {
+                    TopBarWithSearch(
+                        currentScreen,
+                        navController.previousBackStackEntry != null,
+                        { navController.navigateUp() },
+                        stringResource(R.string.search_note_placeholder),
+                        {})
+                }
+            }
         },
         bottomBar = {
             when (navController.currentDestination?.route) {
@@ -133,7 +162,8 @@ fun NotesApp(
                     // Pantallas de inicio o cualquier otra pantalla
                     MainBottomNavBar(
                         onNotesClick = { navController.navigate(NoteScreens.HomeNotes.name) },
-                        onTasksClick = { navController.navigate(NoteScreens.HomeTasks.name) }
+                        onTasksClick = { navController.navigate(NoteScreens.HomeTasks.name) },
+                        onNewNoteClick = { navController.navigate(NoteScreens.CreateNote.name) }
                     )
                 }
             }
@@ -146,13 +176,28 @@ fun NotesApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = NoteScreens.HomeNotes.name) {
-                NoteListScreen(notes)
+                NoteListScreen(
+                    notes = notes,
+                    onNoteClick = {
+                        navController.navigate(NoteScreens.EditNote.name)
+                    },
+                    onNoteLongClick = {})
             }
             composable(route = NoteScreens.CreateNote.name) {
-                // Pantalla de creación de nota
+                AddEditNoteScreen(
+                    note = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
             composable(route = NoteScreens.EditNote.name) {
-                // Pantalla de edición de nota
+                AddEditNoteScreen(
+                    note = notes[selectedNote],
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
             composable(route = NoteScreens.HomeTasks.name) {
                 TaskListScreen(tasks)
