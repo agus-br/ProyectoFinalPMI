@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.screens.tasks
+package com.example.mynotes.ui.tasks
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

@@ -33,16 +33,16 @@ import com.example.mynotes.data.model.Note
 import com.example.mynotes.ui.components.ControlsBottonBar
 import com.example.mynotes.ui.components.MainBottomNavBar
 import com.example.mynotes.ui.components.SearchBar
-import com.example.mynotes.ui.screens.notes.NoteListScreen
+import com.example.mynotes.ui.notes.NoteListScreen
 
 import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 
 // Importación de los datos de ejemplo
 import com.example.mynotes.data.notes
 import com.example.mynotes.data.tasks
-import com.example.mynotes.ui.screens.notes.AddEditNoteScreen
-import com.example.mynotes.ui.screens.tasks.AddEditTaskScreen
-import com.example.mynotes.ui.screens.tasks.TaskListScreen
+import com.example.mynotes.ui.notes.AddEditNoteScreen
+import com.example.mynotes.ui.tasks.AddEditTaskScreen
+import com.example.mynotes.ui.tasks.TaskListScreen
 
 enum class NoteScreens(@StringRes val title: Int) {
     HomeNotes(title = R.string.notes),  // Pantalla principal donde se muestran todas las notas

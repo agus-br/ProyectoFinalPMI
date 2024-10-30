@@ -1,14 +1,17 @@
-package com.example.mynotes.ui.screens.tasks
+package com.example.mynotes.ui.notes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -22,31 +25,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mynotes.R
-import com.example.mynotes.data.model.Task
-import com.example.mynotes.data.tasks
+import com.example.mynotes.data.model.Note
+import com.example.mynotes.data.notes
 import com.example.mynotes.ui.theme.MyNotesTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditTaskScreen(
-    task: Task?,
+fun AddEditNoteScreen(
+    note: Note?,
     modifier: Modifier = Modifier
 ) {
     // Estado para almacenar el texto de los campos
-    var title by remember { mutableStateOf(task?.title ?: "") }
-    var description by remember { mutableStateOf(task?.description ?: "") }
-    var content by remember { mutableStateOf(task?.content ?: "") }
+    var title by remember { mutableStateOf(note?.title ?: "") }
+    var description by remember { mutableStateOf(note?.description ?: "") }
+    var content by remember { mutableStateOf(note?.content ?: "") }
 
     Column (
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier
     ) {
-        // Título de la tarea
+        // Título de la nota
         OutlinedTextField(
             value = title,
             textStyle = MaterialTheme.typography.titleLarge,
@@ -54,6 +55,8 @@ fun AddEditTaskScreen(
             placeholder = {
                 Text(stringResource(R.string.title))
             },
+            modifier = Modifier
+                .fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedTextColor = Color.Black,
                 focusedTextColor = Color.Black,
@@ -61,6 +64,7 @@ fun AddEditTaskScreen(
                 focusedBorderColor = Color.Transparent
             )
         )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth() // Ancho completo de la pantalla o contenedor
@@ -69,13 +73,15 @@ fun AddEditTaskScreen(
                 .padding(horizontal = 8.dp)
         )
 
-        // Descripción de la tarea
+        // Descripción de la nota
         OutlinedTextField(
             value = description,
             textStyle = MaterialTheme.typography.titleSmall,
             onValueChange = { description = it },
             placeholder = {
-                Text(stringResource(R.string.description))
+                Text(
+                    stringResource(R.string.description)
+                )
             },
             modifier = Modifier
                 .fillMaxWidth(),
@@ -86,8 +92,7 @@ fun AddEditTaskScreen(
                 focusedBorderColor = Color.Transparent
             )
         )
-
-        // Contenido de la tarea
+        // Contenido de la nota
         OutlinedTextField(
             value = content,
             textStyle = MaterialTheme.typography.titleMedium,
@@ -95,6 +100,8 @@ fun AddEditTaskScreen(
             placeholder = {
                 Text(stringResource(R.string.content))
             },
+            modifier = Modifier
+                .fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedTextColor = Color.Black,
                 focusedTextColor = Color.Black,
@@ -109,8 +116,8 @@ fun AddEditTaskScreen(
 @Composable
 fun GreetingPreview() {
     MyNotesTheme {
-        AddEditTaskScreen(
-            task = tasks[0],
+        AddEditNoteScreen(
+            note = notes[0],
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)
