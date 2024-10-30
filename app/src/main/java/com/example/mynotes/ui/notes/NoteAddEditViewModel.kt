@@ -6,19 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mynotes.data.NoteTaskRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
-class AddEditNoteViewModel(
+class NoteAddEditViewModel(
     savedStateHandle: SavedStateHandle,
-    private val notesRepository: NotesRepository
+    private val notesRepository: NoteTaskRepository
 ) : ViewModel() {
 
     /**
      * Holds current item ui state
      */
-    var noteUiState by mutableStateOf(NoteUiState())
+    var noteUiState by mutableStateOf(sUiState())
         private set
 
     private val noteId: Int = checkNotNull(savedStateHandle[NoteEditDestination.noteIdArg])

@@ -9,42 +9,42 @@ class DefNoteTaskRepository(
 ) : NoteTaskRepository {
 
     override fun getAllNoteTasksStream(): Flow<List<NoteTask>> =
-        noteTaskDao.getAllNoteTasks() // Este método permanece igual
+        noteTaskDao.getAllNoteTasks()
 
     override fun getNoteTaskStream(id: Int): Flow<NoteTask?> =
-        noteTaskDao.getNoteTask(id) // Este método permanece igual
+        noteTaskDao.getNoteTask(id)
 
     override suspend fun insertNoteTask(noteTask: NoteTask) {
-        noteTaskDao.insert(noteTask) // Este método permanece igual
+        noteTaskDao.insert(noteTask)
     }
 
     override suspend fun deleteNoteTask(noteTask: NoteTask) {
-        noteTaskDao.delete(noteTask) // Este método permanece igual
+        noteTaskDao.delete(noteTask)
     }
 
     override suspend fun updateNoteTask(noteTask: NoteTask) {
-        noteTaskDao.update(noteTask) // Este método permanece igual
+        noteTaskDao.update(noteTask)
     }
 
     override fun getRemindersForNoteTaskStream(noteTaskId: Int): Flow<List<Reminder>> =
-        reminderDao.getRemindersByNoteTaskId(noteTaskId) // Cambia el nombre del método
+        reminderDao.getRemindersByNoteTaskId(noteTaskId)
 
     override suspend fun insertReminder(reminder: Reminder) {
-        reminderDao.insert(reminder) // Este método permanece igual
+        reminderDao.insert(reminder)
     }
 
     override suspend fun deleteReminder(reminder: Reminder) {
-        reminderDao.delete(reminder) // Este método permanece igual
+        reminderDao.delete(reminder)
     }
 
     override fun getMediaFilesForNoteTaskStream(noteTaskId: Int): Flow<List<MediaFile>> =
-        mediaFileDao.getMediaFilesByNoteTaskId(noteTaskId) // Cambia el nombre del método
+        mediaFileDao.getMediaFilesByNoteTaskId(noteTaskId)
 
     override suspend fun insertMediaFile(mediaFile: MediaFile) {
-        mediaFileDao.insert(mediaFile) // Este método permanece igual
+        mediaFileDao.insert(mediaFile)
     }
 
     override suspend fun deleteMediaFile(mediaFile: MediaFile) {
-        mediaFileDao.delete(mediaFile) // Este método permanece igual
+        mediaFileDao.delete(mediaFile)
     }
 }

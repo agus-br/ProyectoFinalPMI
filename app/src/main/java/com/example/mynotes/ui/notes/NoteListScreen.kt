@@ -12,9 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mynotes.data.model.Note
 import com.example.mynotes.ui.components.NoteItem
+import androidx.annotation.StringRes
+import com.example.mynotes.R
+import com.example.mynotes.ui.navigation.NavigationDestination
+
+// Note List Destination
+object NoteListDestination : NavigationDestination {
+    override val route = "noteList"
+    @StringRes
+    override val titleRes = R.string.notes
+}
 
 @Composable
 fun NoteListScreen(
+    navigateToNewNote: () -> Unit, // Navegar a agregar una nota o tarea
+    navigateToUpdateNote: (Int) -> Unit, // Navegar a editar un elemento existente
     notes: List<Note>,
     onNoteClick: () -> Unit,
     onNoteLongClick: () -> Unit

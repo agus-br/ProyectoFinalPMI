@@ -1,7 +1,6 @@
 package com.example.mynotes
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
@@ -29,7 +27,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.mynotes.data.model.Note
 import com.example.mynotes.ui.components.ControlsBottonBar
 import com.example.mynotes.ui.components.MainBottomNavBar
 import com.example.mynotes.ui.components.SearchBar
@@ -41,7 +38,7 @@ import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 import com.example.mynotes.data.notes
 import com.example.mynotes.data.tasks
 import com.example.mynotes.ui.notes.AddEditNoteScreen
-import com.example.mynotes.ui.tasks.AddEditTaskScreen
+import com.example.mynotes.ui.tasks.TaskAddEditScreen
 import com.example.mynotes.ui.tasks.TaskListScreen
 
 enum class NoteScreens(@StringRes val title: Int) {
@@ -211,7 +208,7 @@ fun NotesApp(
                 )
             }
             composable(route = NoteScreens.CreateTask.name) {
-                AddEditTaskScreen(
+                TaskAddEditScreen(
                     task = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -219,7 +216,7 @@ fun NotesApp(
                 )
             }
             composable(route = NoteScreens.EditTask.name) {
-                AddEditTaskScreen(
+                TaskAddEditScreen(
                     task = tasks[selectedItem],
                     modifier = Modifier
                         .fillMaxSize()

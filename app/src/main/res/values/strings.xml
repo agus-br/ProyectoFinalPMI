@@ -1,9 +1,8 @@
 <resources>
     <!-- App name -->
-    <string name="app_name">My Notes App</string>
+    <string name="app_name" translatable="false">MyNotes App</string>
 
     <!-- Screens Titles -->
-    <string name="notes">Mis Notas</string>
     <string name="create_note">Nueva Nota</string>
     <string name="edit_note">Editar Nota</string>
     <string name="tasks">Mis Tareas</string>
@@ -40,4 +39,5 @@
     <string name="delete_confirmation">¿Estás seguro de querer hacerlo?</string>
     <string name="error_onDelete_note">Error al eliminar la nota</string>
     <string name="error_onDelete_task">Error al eliminar la tarea</string>
+    <string name="notes">Mis notas</string>
 </resources>

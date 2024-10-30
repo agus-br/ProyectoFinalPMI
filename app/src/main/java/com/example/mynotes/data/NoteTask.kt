@@ -12,7 +12,11 @@ data class NoteTask(
     @ColumnInfo(name = "type") val type: NoteTaskType,
     @ColumnInfo(name = "due_date") val dueDate: Long? = null, // Solo para tareas
     @ColumnInfo(name = "is_completed") val isCompleted: Boolean = false, // Solo para tareas
-)
+) {
+    fun isNote(): Boolean = type == NoteTaskType.NOTE
+
+    fun isTask(): Boolean = type == NoteTaskType.TASK
+}
 
 enum class NoteTaskType {
     NOTE,
