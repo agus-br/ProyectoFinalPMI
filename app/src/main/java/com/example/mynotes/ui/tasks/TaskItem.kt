@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.components
+package com.example.mynotes.ui.tasks
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.dp
 fun TaskItem(
     title: String,
     description: String,
-    content: String,
-    state: String,
     completed: Boolean, // Estado que indica si la tarea está completada
     modifier: Modifier = Modifier,
     onClick: () -> Unit,  // Acción al hacer clic en la tarea
@@ -68,27 +66,25 @@ fun TaskItem(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black,
                     maxLines = 1, // Limitar a 1 línea para que no ocupe demasiado espacio
                     overflow = TextOverflow.Ellipsis // Mostrar "..." si el contenido es muy largo
                 )
 
                 // Descripción de la tarea
-                Spacer(modifier = Modifier.height(8.dp)) // Espaciado entre título y descripción
+                /*Spacer(modifier = Modifier.height(8.dp)) // Espaciado entre título y descripción
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.DarkGray,
                     maxLines = 1, // Limitar a 2 líneas
                     overflow = TextOverflow.Ellipsis // Mostrar "..." si es muy largo
-                )
+                )*/
 
                 // Contenido de la tarea
                 Spacer(modifier = Modifier.height(8.dp)) // Espaciado entre descripción y contenido
                 Text(
-                    text = content,
+                    text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
                     maxLines = 2, // Limitar a un número de líneas razonable
                     overflow = TextOverflow.Ellipsis // Mostrar "..." si es muy largo
                 )

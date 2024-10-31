@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import android.content.Context
 
-@Database(entities = [NoteTask::class, Reminder::class, MediaFile::class], version = 1, exportSchema = false)
+@Database(entities = [NoteTask::class, Reminder::class, MediaFile::class], version = 2, exportSchema = false)
 abstract class MyNotesDatabase : RoomDatabase() {
     abstract fun noteTaskDao(): NoteTaskDao
     abstract fun reminderDao(): ReminderDao
@@ -13,17 +13,13 @@ abstract class MyNotesDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: MyNotesDatabase? = null
+        private var Instance: MyNotesDatabase? = null
 
         fun getDatabase(context: Context): MyNotesDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    MyNotesDatabase::class.java,
-                    "my_notes_database"
-                ).build()
-                INSTANCE = instance
-                instance
+            return Instance ?: synchronized(this) {
+                Room.databaseBuilder(context, MyNotesDatabase::class.java, "my_notes_database")
+                    .build()
+                    .also { Instance = it }
             }
         }
     }

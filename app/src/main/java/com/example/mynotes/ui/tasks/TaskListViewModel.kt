@@ -4,25 +4,40 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskRepository
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.mynotes.data.NoteTaskType
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TaskListViewModel(private val repository: NoteTaskRepository) : ViewModel() {
-    private val _tasks = MutableStateFlow<List<NoteTask>>(emptyList())
-    val tasks: StateFlow<List<NoteTask>> = _tasks
+class TaskListViewModel(
+    private val repository: NoteTaskRepository
+) : ViewModel() {
 
-    init {
-        fetchTasks()
+    // StateFlow para mantener la lista de tareas
+    val tasks: StateFlow<List<NoteTask>> = repository.getAllNoteTasksStream()
+        .map { noteTasks ->
+            noteTasks.filter { it.type == NoteTaskType.TASK }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    // Método para eliminar una tarea
+    fun deleteTask(task: NoteTask) {
+        viewModelScope.launch {
+            repository.deleteNoteTask(task)
+        }
     }
 
-    private fun fetchTasks() {
+    // Método para marcar una tarea como completada
+    fun completeTask(task: NoteTask) {
+        val updatedTask = task.copy(isCompleted = true)
         viewModelScope.launch {
-            repository.getAllNoteTasksStream().collect { noteList ->
-                // Filtrar los elementos que tienen el tipo TASK
-                _tasks.value = noteList.filter { it.isTask() }
-            }
+            repository.updateNoteTask(updatedTask)
         }
     }
 }

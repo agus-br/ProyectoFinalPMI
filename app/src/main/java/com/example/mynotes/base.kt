@@ -37,7 +37,6 @@ import com.example.mynotes.ui.viewmodel.MyNotesAppViewModel
 // Importación de los datos de ejemplo
 import com.example.mynotes.data.notes
 import com.example.mynotes.data.tasks
-import com.example.mynotes.ui.notes.AddEditNoteScreen
 import com.example.mynotes.ui.tasks.TaskAddEditScreen
 import com.example.mynotes.ui.tasks.TaskListScreen
 
@@ -103,7 +102,7 @@ fun TopBarWithSearch(
         )
     }
 }
-
+/*
 @Composable
 fun NotesApp(
     viewModel: MyNotesAppViewModel = viewModel(),
@@ -167,62 +166,63 @@ fun NotesApp(
             }
         }
 
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = NoteScreens.HomeNotes.name,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(route = NoteScreens.HomeNotes.name) {
-                NoteListScreen(
-                    notes = notes,
-                    onNoteClick = {
-                        navController.navigate(NoteScreens.EditNote.name)
-                    },
-                    onNoteLongClick = {})
-            }
-            composable(route = NoteScreens.CreateNote.name) {
-                AddEditNoteScreen(
-                    note = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                )
-            }
-            composable(route = NoteScreens.EditNote.name) {
-                AddEditNoteScreen(
-                    note = notes[selectedItem],
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                )
-            }
-            composable(route = NoteScreens.HomeTasks.name) {
-                TaskListScreen(
-                    tasks = tasks,
-                    onTaksClick = {
-                        navController.navigate(NoteScreens.EditTask.name)
-                    },
-                    onTaskLongClick = {},
-                    onCheckedChanged = {}
-                )
-            }
-            composable(route = NoteScreens.CreateTask.name) {
-                TaskAddEditScreen(
-                    task = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                )
-            }
-            composable(route = NoteScreens.EditTask.name) {
-                TaskAddEditScreen(
-                    task = tasks[selectedItem],
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                )
-            }
-        }
-    }
-}
+    ) { innerPadding -> ()
+//    innerPadding ->
+//        NavHost(
+//            navController = navController,
+//            startDestination = NoteScreens.HomeNotes.name,
+//            modifier = Modifier.padding(innerPadding)
+//        ) {
+//            composable(route = NoteScreens.HomeNotes.name) {
+//                NoteListScreen(
+//                    notes = notes,
+//                    onNoteClick = {
+//                        navController.navigate(NoteScreens.EditNote.name)
+//                    },
+//                    onNoteLongClick = {})
+//            }
+//            composable(route = NoteScreens.CreateNote.name) {
+//                AddEditNoteScreen(
+//                    note = null,
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(16.dp)
+//                )
+//            }
+//            composable(route = NoteScreens.EditNote.name) {
+//                AddEditNoteScreen(
+//                    note = notes[selectedItem],
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(16.dp)
+//                )
+//            }
+//            composable(route = NoteScreens.HomeTasks.name) {
+//                TaskListScreen(
+//                    tasks = tasks,
+//                    onTaksClick = {
+//                        navController.navigate(NoteScreens.EditTask.name)
+//                    },
+//                    onTaskLongClick = {},
+//                    onCheckedChanged = {}
+//                )
+//            }
+//            composable(route = NoteScreens.CreateTask.name) {
+//                TaskAddEditScreen(
+//                    task = null,
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(16.dp)
+//                )
+//            }
+//            composable(route = NoteScreens.EditTask.name) {
+//                TaskAddEditScreen(
+//                    task = tasks[selectedItem],
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(16.dp)
+//                )
+//            }
+//        }
+//    }
+}*/

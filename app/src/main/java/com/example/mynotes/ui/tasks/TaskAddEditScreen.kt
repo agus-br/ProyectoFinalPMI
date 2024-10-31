@@ -1,116 +1,111 @@
 package com.example.mynotes.ui.tasks
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.example.mynotes.R
-import com.example.mynotes.data.model.Task
 import com.example.mynotes.ui.navigation.NavigationDestination
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.R
+import com.example.mynotes.ui.AppViewModelProvider
 
 // Add/Edit Note Destination
 object AddEditTaskDestination : NavigationDestination {
-    const val taskIdArg = "taskId"
+    //const val taskIdArg = "taskId"
 
     // Implementación de las propiedades requeridas por la interfaz
-    override val route = "addEditTask/{$taskIdArg}"
+    //override val route = "addEditTask/{$taskIdArg}"
 
     // Puedes definir un valor de recurso de cadena para el título
-    override val titleRes = R.string.edit_note // Asegúrate de tener este recurso definido
+    //override val titleRes = R.string.edit_note // Asegúrate de tener este recurso definido
 
     // Método para construir la ruta con un ID específico
-    fun route(taskId: Int) = "addEditTask/$taskId"
+    //fun route(taskId: Int) = "addEditTask/$taskId"
+    override val titleRes = R.string.edit_task
+    const val taskIdArg = "taskId"
+    override val route = "addEditTask/{$taskIdArg}"
+    val routeWithArgs = "$route/{$taskIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskAddEditScreen(
-    taskId: Int,
-    navigateBack: () -> Unit,
-    task: Task?,
-    modifier: Modifier = Modifier
+    taskId: Int? = null,
+    viewModel: TaskAddEditViewModel = viewModel(factory = AppViewModelProvider.Factory), // Inyección del ViewModel con Factory
+    onNavigateBack: () -> Unit // Callback para regresar a la pantalla anterior
 ) {
-    // Estado para almacenar el texto de los campos
-    var title by remember { mutableStateOf(task?.title ?: "") }
-    var description by remember { mutableStateOf(task?.description ?: "") }
-    var content by remember { mutableStateOf(task?.content ?: "") }
-
-    Column (
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Título de la tarea
-        OutlinedTextField(
-            value = title,
-            textStyle = MaterialTheme.typography.titleLarge,
-            onValueChange = { title = it },
-            placeholder = {
-                Text(stringResource(R.string.title))
-            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent
-            )
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth() // Ancho completo de la pantalla o contenedor
-                .height(2.dp) // Grosor de la línea
-                .background(Color.Gray) // Color de la línea
-                .padding(horizontal = 8.dp)
-        )
-
-        // Descripción de la tarea
-        OutlinedTextField(
-            value = description,
-            textStyle = MaterialTheme.typography.titleSmall,
-            onValueChange = { description = it },
-            placeholder = {
-                Text(stringResource(R.string.description))
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedTextColor = Color.Gray,
-                focusedTextColor = Color.Gray,
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent
-            )
-        )
-
-        // Contenido de la tarea
-        OutlinedTextField(
-            value = content,
-            textStyle = MaterialTheme.typography.titleMedium,
-            onValueChange = { content = it },
-            placeholder = {
-                Text(stringResource(R.string.content))
-            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent
-            )
-        )
+    // Cargar la tarea si existe un ID
+    LaunchedEffect(taskId) {
+        taskId?.let { viewModel.loadTask(it) }
     }
+
+    // Obtener los estados del ViewModel
+    val title = viewModel.title.collectAsState()
+    val description = viewModel.description.collectAsState()
+
+    // Interfaz de usuario
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = if (taskId == null) "Add Task" else "Edit Task") },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.deleteTask()
+                        onNavigateBack() // Regresar después de eliminar
+                    }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+                    }
+                }
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                // Campo para el título de la tarea
+                TextField(
+                    value = title.value,
+                    onValueChange = { viewModel.onTitleChange(it) },
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Campo para la descripción de la tarea
+                TextField(
+                    value = description.value,
+                    onValueChange = { viewModel.onDescriptionChange(it) },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 5
+                )
+
+                // Botón para guardar la tarea
+                Button(
+                    onClick = {
+                        viewModel.saveTask() // Asumiendo que tienes un método para guardar la tarea
+                        onNavigateBack() // Regresar después de guardar
+                    },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Save")
+                }
+            }
+        }
+    )
 }

@@ -10,10 +10,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.data.model.Note
-import com.example.mynotes.ui.components.NoteItem
 import androidx.annotation.StringRes
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.R
+import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.navigation.NavigationDestination
 
 // Note List Destination
@@ -25,16 +26,15 @@ object NoteListDestination : NavigationDestination {
 
 @Composable
 fun NoteListScreen(
-    navigateToNewNote: () -> Unit, // Navegar a agregar una nota o tarea
-    navigateToUpdateNote: (Int) -> Unit, // Navegar a editar un elemento existente
-    notes: List<Note>,
-    onNoteClick: () -> Unit,
-    onNoteLongClick: () -> Unit
+    navigateToNewNote: () -> Unit,
+    navigateToUpdateNote: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NoteListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val notes = viewModel.notes.collectAsState().value
 
-    // Uso de LazyVerticalGrid para mostrar las notas en dos columnas
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // Definir que serán 2 columnas
+        columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp),
@@ -46,11 +46,10 @@ fun NoteListScreen(
             NoteItem(
                 title = note.title,
                 description = note.description,
-                content = note.content,
-                onClick = onNoteClick,
-                onLongClick = onNoteLongClick
+                onClick = { navigateToUpdateNote(note.id) },
+                onLongClick = { viewModel.deleteNote(note) }
             )
         }
     }
-
 }
+

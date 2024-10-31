@@ -9,11 +9,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.data.model.Task
-import com.example.mynotes.ui.components.TaskItem
 import androidx.annotation.StringRes
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.mynotes.R
 import com.example.mynotes.ui.navigation.NavigationDestination
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.ui.AppViewModelProvider
 
 // Task List Destination
 object TaskListDestination : NavigationDestination {
@@ -24,15 +26,17 @@ object TaskListDestination : NavigationDestination {
 
 @Composable
 fun TaskListScreen(
-    navigateToNewTask: () -> Unit, // Navegar a agregar una nota o tarea
-    navigateToUpdateTask: (Int) -> Unit, // Navegar a editar un elemento existente
-    tasks: List<Task>,
-    onTaksClick: () -> Unit,
-    onTaskLongClick: () -> Unit,
-    onCheckedChanged: (Boolean) -> Unit
+    navigateToNewTask: () -> Unit,
+    navigateToUpdateTask: (Int) -> Unit,
+    onTaskClick: (Int) -> Unit,
+    onTaskLongClick: (Int) -> Unit,
+    onCheckedChanged: (Int, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: TaskListViewModel = viewModel(factory = AppViewModelProvider.Factory) // Instanciar el ViewModel
 ) {
+    // Observando la lista de tareas desde el ViewModel
+    val tasks by viewModel.tasks.collectAsState(emptyList())
 
-    // Uso de LazyColumn para mostrar las tareas en una sola columna
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -44,14 +48,11 @@ fun TaskListScreen(
             TaskItem(
                 title = task.title,
                 description = task.description,
-                content = task.content,
-                state = task.state,
-                completed = task.completed,
-                onClick = onTaksClick,
-                onLongClick = onTaskLongClick,
-                onCheckedChange = onCheckedChanged
+                completed = task.isCompleted,
+                onClick = { onTaskClick(task.id) },
+                onLongClick = { onTaskLongClick(task.id) },
+                onCheckedChange = { isChecked -> onCheckedChanged(task.id, isChecked) }
             )
         }
     }
-
 }

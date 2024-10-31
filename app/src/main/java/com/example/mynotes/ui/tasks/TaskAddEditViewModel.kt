@@ -1,52 +1,88 @@
 package com.example.mynotes.ui.tasks
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskRepository
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.filterNotNull
+import com.example.mynotes.data.NoteTaskType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class TaskAddEditViewModel(
     savedStateHandle: SavedStateHandle,
-    private val notesRepository: NoteTaskRepository
+    private val repository: NoteTaskRepository
 ) : ViewModel() {
 
-    /**
-     * Holds current item ui state
-     */
-    var noteUiState by mutableStateOf(TaskUiState())
-        private set
+    // Estado de los campos de la tarea
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> = _title
 
-    private val noteId: Int = checkNotNull(savedStateHandle[TaskEditDestination.noteIdArg])
+    private val _description = MutableStateFlow("")
+    val description: StateFlow<String> = _description
 
-    private fun validateInput(uiState: TaskDetails = TaskUiState.noteDetails): Boolean {
-        return with(uiState) {
-            name.isNotBlank() && price.isNotBlank() && quantity.isNotBlank()
-        }
-    }
+    private val _completed = MutableStateFlow(false)
+    val completed: StateFlow<Boolean> = _completed
 
-    init {
+    private var currentTask: NoteTask? = null
+
+    // Cargar una tarea existente para edición
+    fun loadTask(taskId: Int) {
         viewModelScope.launch {
-            noteUiState = notesRepository.getTaskStream(noteId)
-                .filterNotNull()
-                .first()
-                .toItemUiState(true)
+            repository.getNoteTaskStream(taskId).first()?.let { task ->
+                currentTask = task
+                _title.value = task.title
+                _description.value = task.description
+                _completed.value = task.isCompleted
+            }
         }
     }
 
-    fun updateUiState(noteDetails: NoteDetails) {
-        noteUiState =
-            NoteUiState(noteDetails = noteDetails, isEntryValid = validateInput(noteDetails))
+    // Actualizar el estado del título
+    fun onTitleChange(newTitle: String) {
+        _title.value = newTitle
     }
 
-    suspend fun updateItem() {
-        if (validateInput(noteUiState.itemDetails)) {
-            notesRepository.updateItem(noteUiState.itemDetails.toItem())
+    // Actualizar el estado de la descripción
+    fun onDescriptionChange(newDescription: String) {
+        _description.value = newDescription
+    }
+
+    // Actualizar el estado de completado
+    fun onCompletedChange(isCompleted: Boolean) {
+        _completed.value = isCompleted
+    }
+
+    // Guardar o actualizar una tarea en el repositorio
+    fun saveTask() {
+        viewModelScope.launch {
+            val task = currentTask?.copy(
+                title = _title.value,
+                description = _description.value,
+                isCompleted = _completed.value,
+                type = NoteTaskType.TASK
+            ) ?: NoteTask(
+                title = _title.value,
+                description = _description.value,
+                isCompleted = _completed.value,
+                type = NoteTaskType.TASK
+            )
+            if (currentTask == null) {
+                repository.insertNoteTask(task)
+            } else {
+                repository.updateNoteTask(task)
+            }
+        }
+    }
+
+    // Eliminar la tarea actual en el repositorio
+    fun deleteTask() {
+        currentTask?.let { task ->
+            viewModelScope.launch {
+                repository.deleteNoteTask(task)
+            }
         }
     }
 }
