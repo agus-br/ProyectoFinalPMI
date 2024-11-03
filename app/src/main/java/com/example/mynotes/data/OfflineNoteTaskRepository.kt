@@ -2,7 +2,7 @@ package com.example.mynotes.data
 
 import kotlinx.coroutines.flow.Flow
 
-class DefNoteTaskRepository(
+class OfflineNoteTaskRepository(
     private val noteTaskDao: NoteTaskDao,
     private val reminderDao: ReminderDao,
     private val mediaFileDao: MediaFileDao
@@ -11,8 +11,14 @@ class DefNoteTaskRepository(
     override fun getAllNoteTasksStream(): Flow<List<NoteTask>> =
         noteTaskDao.getAllNoteTasks()
 
-    override fun getNoteTaskStream(id: Int): Flow<NoteTask?> =
+    override fun getNoteTaskByIdStream(id: Int): Flow<NoteTask?> =
         noteTaskDao.getNoteTask(id)
+
+    override fun getCompletedTaskStream(): Flow<List<NoteTask>> =
+        noteTaskDao.getCompleteTasks()
+
+    override fun getUncompletedTaskStream(): Flow<List<NoteTask>> =
+        noteTaskDao.getCompleteTasks()
 
     override suspend fun insertNoteTask(noteTask: NoteTask) {
         noteTaskDao.insert(noteTask)
@@ -26,7 +32,7 @@ class DefNoteTaskRepository(
         noteTaskDao.update(noteTask)
     }
 
-    override fun getRemindersForNoteTaskStream(noteTaskId: Int): Flow<List<Reminder>> =
+    override fun getRemindersByNoteTaskIdStream(noteTaskId: Int): Flow<List<Reminder>> =
         reminderDao.getRemindersByNoteTaskId(noteTaskId)
 
     override suspend fun insertReminder(reminder: Reminder) {
@@ -37,7 +43,11 @@ class DefNoteTaskRepository(
         reminderDao.delete(reminder)
     }
 
-    override fun getMediaFilesForNoteTaskStream(noteTaskId: Int): Flow<List<MediaFile>> =
+    override suspend fun updateReminder(reminder: Reminder) {
+        reminderDao.update(reminder)
+    }
+
+    override fun getMediaFilesByNoteTaskIdStream(noteTaskId: Int): Flow<List<MediaFile>> =
         mediaFileDao.getMediaFilesByNoteTaskId(noteTaskId)
 
     override suspend fun insertMediaFile(mediaFile: MediaFile) {

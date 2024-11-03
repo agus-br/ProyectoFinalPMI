@@ -1,13 +1,14 @@
 package com.example.mynotes.ui.notes
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskRepository
-import com.example.mynotes.data.NoteTaskType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -16,54 +17,55 @@ class NoteAddEditViewModel(
     private val repository: NoteTaskRepository
 ) : ViewModel() {
 
-    // Estado de los campos de la nota
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> = _title
-
-    private val _description = MutableStateFlow("")
-    val description: StateFlow<String> = _description
-
-    private val _content = MutableStateFlow("")
-    val content: StateFlow<String> = _content
+    var noteUiState by mutableStateOf(NoteUiState())
+        private set
 
     private var currentNoteTask: NoteTask? = null
 
-    // Cargar una nota existente para edición
-    fun loadNoteTask(noteTaskId: Int) {
-        viewModelScope.launch {
-            repository.getNoteTaskStream(noteTaskId).first()?.let { noteTask ->
-                currentNoteTask = noteTask
-                _title.value = noteTask.title
-                _description.value = noteTask.description
-            }
+    private val noteId: Int? = savedStateHandle[AddEditNoteDestination.noteIdArg]
+
+    private fun validateInput(uiState: NoteDetails = noteUiState.noteDetails): Boolean {
+        return with(uiState) {
+            title.isNotBlank() && description.isNotBlank()
         }
     }
 
-    // Actualizar el estado del título
-    fun onTitleChange(newTitle: String) {
-        _title.value = newTitle
+    init {
+        // Carga la nota existente si se proporciona un ID
+        noteId?.let { loadNoteTask(it) }
     }
 
-    // Actualizar el estado de la descripción
-    fun onDescriptionChange(newDescription: String) {
-        _description.value = newDescription
+    // Cargar una nota existente para edición
+    private fun loadNoteTask(noteTaskId: Int) {
+        viewModelScope.launch {
+            noteUiState = repository.getNoteTaskByIdStream(noteTaskId)
+                .filterNotNull()
+                .first()
+                .toNoteUiState(true)
+        }
     }
 
-    // Actualizar el estado del contenido
-    fun onContentChange(newContent: String) {
-        _content.value = newContent
+    fun updateUiState(noteDetails: NoteDetails) {
+        noteUiState =
+            NoteUiState(noteDetails = noteDetails, isEntryValid = validateInput(noteDetails))
     }
 
-    // Guardar o actualizar una nota en el repositorio
+    suspend fun updateItem() {
+        if (validateInput(noteUiState.noteDetails)) {
+            repository.updateNoteTask(noteUiState.noteDetails.toNote())
+        }
+    }
+
+    /*// Guardar o actualizar una nota en el repositorio
     fun saveNoteTask() {
         viewModelScope.launch {
             val noteTask = currentNoteTask?.copy(
-                title = _title.value,
-                description = _description.value,
+                title = _noteUiState.value.title,
+                description = _noteUiState.value.description,
                 type = NoteTaskType.NOTE
             ) ?: NoteTask(
-                title = _title.value,
-                description = _description.value,
+                title = _noteUiState.value.title,
+                description = _noteUiState.value.description,
                 type = NoteTaskType.NOTE
             )
             if (currentNoteTask == null) {
@@ -81,5 +83,6 @@ class NoteAddEditViewModel(
                 repository.deleteNoteTask(noteTask)
             }
         }
-    }
+    }*/
+
 }

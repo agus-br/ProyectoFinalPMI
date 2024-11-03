@@ -10,7 +10,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val noteTaskRepository: NoteTaskRepository by lazy {
         val database = MyNotesDatabase.getDatabase(context)
-        DefNoteTaskRepository(
+        OfflineNoteTaskRepository(
             noteTaskDao = database.noteTaskDao(),
             reminderDao = database.reminderDao(),
             mediaFileDao = database.mediaFileDao()

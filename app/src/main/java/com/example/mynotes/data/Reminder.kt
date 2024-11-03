@@ -13,5 +13,5 @@ import androidx.room.PrimaryKey
 data class Reminder(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val noteTaskId: Int,
-    val time: Long
+    val datetime: Long
 )

@@ -11,7 +11,17 @@ interface NoteTaskRepository {
     /**
      * Retrieve a specific note task by ID as a stream.
      */
-    fun getNoteTaskStream(id: Int): Flow<NoteTask?>
+    fun getNoteTaskByIdStream(id: Int): Flow<NoteTask?>
+
+    /**
+     * Retrieve a task completed list as a stream.
+     */
+    fun getCompletedTaskStream(): Flow<List<NoteTask>>
+
+    /**
+     *  Retrieve a task uncompleted list as a stream.
+     */
+    fun getUncompletedTaskStream(): Flow<List<NoteTask>>
 
     /**
      * Insert a new note task.
@@ -31,7 +41,7 @@ interface NoteTaskRepository {
     /**
      * Retrieve reminders associated with a specific note task as a stream.
      */
-    fun getRemindersForNoteTaskStream(noteTaskId: Int): Flow<List<Reminder>>
+    fun getRemindersByNoteTaskIdStream(noteTaskId: Int): Flow<List<Reminder>>
 
     /**
      * Insert a new reminder.
@@ -44,9 +54,14 @@ interface NoteTaskRepository {
     suspend fun deleteReminder(reminder: Reminder)
 
     /**
+     * Update a specific reminder.
+     */
+    suspend fun updateReminder(reminder: Reminder)
+
+    /**
      * Retrieve media files associated with a specific note task as a stream.
      */
-    fun getMediaFilesForNoteTaskStream(noteTaskId: Int): Flow<List<MediaFile>>
+    fun getMediaFilesByNoteTaskIdStream(noteTaskId: Int): Flow<List<MediaFile>>
 
     /**
      * Insert a new media file.

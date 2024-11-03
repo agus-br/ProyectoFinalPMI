@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteTaskDao {
 
-    @Query("SELECT * FROM note_task ORDER BY due_date ASC")
+    @Query("SELECT * FROM note_task ORDER BY dueDate ASC")
     fun getAllNoteTasks(): Flow<List<NoteTask>>
 
     @Query("SELECT * FROM note_task WHERE id = :id")
-    fun getNoteTask(id: Int): Flow<NoteTask?>
+    fun getNoteTask(id: Int): Flow<NoteTask>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(noteTask: NoteTask)
@@ -27,8 +27,12 @@ interface NoteTaskDao {
     suspend fun update(noteTask: NoteTask)
 
     // Obtener todas las tareas incompletas en tiempo real
-    @Query("SELECT * FROM note_task WHERE type = :type AND is_completed = 0")
-    fun getIncompleteTasks(type: NoteTaskType = NoteTaskType.TASK): Flow<List<NoteTask>>
+    @Query("SELECT * FROM note_task WHERE type = :type AND isCompleted = 0")
+    fun getUncompleteTasks(type: NoteTaskType = NoteTaskType.TASK): Flow<List<NoteTask>>
+
+    // Obtener todas las tareas incompletas en tiempo real
+    @Query("SELECT * FROM note_task WHERE type = :type AND isCompleted = 1")
+    fun getCompleteTasks(type: NoteTaskType = NoteTaskType.TASK): Flow<List<NoteTask>>
 
     // Obtener todas las tareas en tiempo real
     @Query("SELECT * FROM note_task WHERE type = :type")

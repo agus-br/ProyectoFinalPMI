@@ -1,19 +1,38 @@
 package com.example.mynotes.ui.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.MyNotesTopAppBar
 import com.example.mynotes.R
+import com.example.mynotes.data.NoteTask
+import com.example.mynotes.data.NoteTaskType
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.navigation.NavigationDestination
-import com.example.mynotes.ui.notes.NoteListScreen
-import com.example.mynotes.ui.tasks.TaskListScreen
+import com.example.mynotes.ui.notes.NoteList
+import com.example.mynotes.ui.tasks.TaskList
 import com.example.mynotes.ui.theme.MyNotesTheme
 
 object HomeDestination : NavigationDestination {
@@ -24,6 +43,7 @@ object HomeDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onClickActionSettings: () -> Unit,
     navigateToNewNote: () -> Unit, // Navegar a agregar una nueva nota
     navigateToUpdateNote: (Int) -> Unit, // Navegar a editar una nota existente
     navigateToNewTask: () -> Unit, // Navegar a agregar una nueva tarea
@@ -31,46 +51,248 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("My Notes") },
-                actions = {
-                    IconButton(onClick = navigateToNewNote) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Note")
-                    }
-                    IconButton(onClick = navigateToNewTask) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Task")
-                    }
-                }
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                // Título para Notas
-                Text(text = "Notes", style = MaterialTheme.typography.titleLarge)
-                NoteListScreen(
-                    navigateToNewNote = navigateToNewNote,
-                    navigateToUpdateNote = navigateToUpdateNote
-                )
+    var currentListShowing by remember { mutableIntStateOf(1) }
+    val homeUiState by viewModel.homeUiState.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-                // Título para Tareas
-                Text(text = "Tasks", style = MaterialTheme.typography.titleLarge)
-                TaskListScreen(
-                    navigateToNewTask = navigateToNewTask,
-                    navigateToUpdateTask = navigateToUpdateTask,
-                    onTaskClick = { navigateToUpdateTask(it) },
-                    onTaskLongClick = { /* Aquí puedes manejar la acción de eliminar */ },
-                    onCheckedChanged = { id, isChecked -> /* Maneja el cambio de estado aquí */ }
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column ()
+            {
+                MyNotesTopAppBar(
+                    title = stringResource(HomeDestination.titleRes),
+                    canNavigateBack = false,
+                    onClickActionSettings = onClickActionSettings,
+                    scrollBehavior = scrollBehavior
+                )
+                SearchBar(
+                    placeHolder = "Buscar mis notas",
+                    onSearch = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = navigateToNewNote,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_note)
+                )
+            }
+        },
+        bottomBar = {
+            MainBottomNavBar(
+                onNotesClick = {currentListShowing = 1},
+                onTasksClick = {currentListShowing = 2}
+            )
         }
-    )
+    ) { innerPadding ->
+        HomeBody(
+            currentListShowing = currentListShowing,
+            itemList = homeUiState.noteTaskList,
+            onItemClick =navigateToUpdateNote,
+            modifier = modifier.padding(innerPadding)
+        )
+    }
 }
+
+@Composable
+private fun HomeBody(
+    currentListShowing: Int,
+    itemList: List<NoteTask>,
+    onItemClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
+    ) {
+        if (itemList.isEmpty()) {
+            Text(
+                text = "No hay elementos",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(contentPadding),
+            )
+        } else {
+            if(currentListShowing == 1){
+                NoteList(
+                    noteList = itemList,
+                    noteItemOnclick = { onItemClick(it.id) },
+                    contentPadding = contentPadding
+                )
+            }else{
+                TaskList(
+                    taskList = itemList,
+                    taskItemOnclick = { onItemClick(it.id) },
+                    contentPadding = contentPadding
+                )
+            }
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyTaskListPreview() {
+
+    MyNotesTheme {
+        HomeBody(
+            currentListShowing = 1,
+            itemList = taskList,
+            onItemClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyNoteListPreview() {
+    MyNotesTheme {
+        HomeBody(
+            currentListShowing = 2,
+            itemList = noteList,
+            onItemClick = {}
+        )
+    }
+}
+
+
+var noteList = listOf(
+    NoteTask(
+        id = 0,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.NOTE
+    ),
+    NoteTask(
+        id = 1,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me ",
+        type = NoteTaskType.NOTE
+    ),
+    NoteTask(
+        id = 2,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba miedo",
+        type = NoteTaskType.NOTE
+    ),
+    NoteTask(
+        id = 3,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida.",
+        type = NoteTaskType.NOTE
+    ),
+    NoteTask(
+        id = 4,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo quey comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.NOTE
+    ),
+    NoteTask(
+        id = 5,
+        title = "Título de un nota",
+        description = "HoSeré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.NOTE
+    )
+)
+
+var taskList = listOf(
+    NoteTask(
+        id = 0,
+        title = "Título de un nota",
+        description = "Hola",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    ),
+    NoteTask(
+        id = 1,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    ),
+    NoteTask(
+        id = 2,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre.",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    ),
+    NoteTask(
+        id = 3,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    ),
+    NoteTask(
+        id = 4,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    ),
+    NoteTask(
+        id = 5,
+        title = "Título de un nota",
+        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
+                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
+                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
+                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
+                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
+                "todo en paz. ",
+        type = NoteTaskType.TASK,
+        isCompleted = false,
+        dueDate = 121245
+    )
+)

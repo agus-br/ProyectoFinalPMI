@@ -9,16 +9,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.example.mynotes.ui.navigation.NavigationDestination
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
+import com.example.mynotes.ui.notes.AddEditNoteDestination
+import com.example.mynotes.ui.notes.NoteAddEditScreen
+import com.example.mynotes.ui.notes.NoteEntryBody
+import com.example.mynotes.ui.theme.MyNotesTheme
+import kotlinx.coroutines.launch
 
 // Add/Edit Note Destination
 object AddEditTaskDestination : NavigationDestination {
@@ -41,71 +52,50 @@ object AddEditTaskDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskAddEditScreen(
-    taskId: Int? = null,
-    viewModel: TaskAddEditViewModel = viewModel(factory = AppViewModelProvider.Factory), // Inyección del ViewModel con Factory
-    onNavigateBack: () -> Unit // Callback para regresar a la pantalla anterior
+    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: TaskAddEditViewModel = viewModel(factory = AppViewModelProvider.Factory) // Inyección del ViewModel con Factory
 ) {
-    // Cargar la tarea si existe un ID
-    LaunchedEffect(taskId) {
-        taskId?.let { viewModel.loadTask(it) }
-    }
+    val coroutineScope = rememberCoroutineScope()
 
-    // Obtener los estados del ViewModel
-    val title = viewModel.title.collectAsState()
-    val description = viewModel.description.collectAsState()
-
-    // Interfaz de usuario
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = if (taskId == null) "Add Task" else "Edit Task") },
-                actions = {
-                    IconButton(onClick = {
-                        viewModel.deleteTask()
-                        onNavigateBack() // Regresar después de eliminar
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+                title = { Text(text = stringResource(AddEditTaskDestination.titleRes)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                // Campo para el título de la tarea
-                TextField(
-                    value = title.value,
-                    onValueChange = { viewModel.onTitleChange(it) },
-                    label = { Text("Title") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                // Campo para la descripción de la tarea
-                TextField(
-                    value = description.value,
-                    onValueChange = { viewModel.onDescriptionChange(it) },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 5
-                )
-
-                // Botón para guardar la tarea
-                Button(
-                    onClick = {
-                        viewModel.saveTask() // Asumiendo que tienes un método para guardar la tarea
-                        onNavigateBack() // Regresar después de guardar
-                    },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Save")
+        modifier = modifier
+    ) { innerPadding ->
+        TaskEntryBody(
+            taskUiState = viewModel.taskUiState,
+            onNoteValueChange = viewModel::updateUiState,
+            onSaveClick = {
+                coroutineScope.launch {
+                    viewModel.updateItem()
+                    onNavigateBack()
                 }
-            }
-        }
-    )
+            },
+            modifier = Modifier
+                .padding(
+                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                    top = innerPadding.calculateTopPadding()
+                )
+                .verticalScroll(rememberScrollState())
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TaskAddEditScreenPreview() {
+    MyNotesTheme() {
+        NoteAddEditScreen(navigateBack = { /*Do nothing*/ }, onNavigateUp = { /*Do nothing*/ })
+    }
 }

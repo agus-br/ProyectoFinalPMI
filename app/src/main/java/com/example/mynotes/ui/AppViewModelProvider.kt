@@ -9,9 +9,9 @@
     import com.example.mynotes.MyNotesApplication
     import com.example.mynotes.ui.home.HomeViewModel
     import com.example.mynotes.ui.notes.NoteAddEditViewModel
-    import com.example.mynotes.ui.notes.NoteListViewModel
+    import com.example.mynotes.ui.notes.NoteEntryViewModel
     import com.example.mynotes.ui.tasks.TaskAddEditViewModel
-    import com.example.mynotes.ui.tasks.TaskListViewModel
+    import com.example.mynotes.ui.tasks.TaskEntryViewModel
 
     object AppViewModelProvider {
         val Factory = viewModelFactory {
@@ -29,9 +29,18 @@
                 )
             }
 
-            // Inicializador para NoteListViewModel
+            // Inicializador para NoteEntryViewModel
             initializer {
-                NoteListViewModel(MyNotesApplication().container.noteTaskRepository)
+                NoteEntryViewModel(
+                    myNotesApplication().container.noteTaskRepository
+                )
+            }
+
+            // Inicializador para NoteEntryViewModel
+            initializer {
+                TaskEntryViewModel(
+                    myNotesApplication().container.noteTaskRepository
+                )
             }
 
             // Inicializador para AddEditTaskViewModel
@@ -40,11 +49,6 @@
                     this.createSavedStateHandle(),
                     myNotesApplication().container.noteTaskRepository
                 )
-            }
-
-            // Inicializador para TaskListViewModel
-            initializer {
-                TaskListViewModel(myNotesApplication().container.noteTaskRepository)
             }
         }
     }

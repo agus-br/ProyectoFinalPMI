@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,4 +21,7 @@ interface ReminderDao {
 
     @Query("DELETE FROM reminder WHERE noteTaskId = :noteTaskId")
     suspend fun deleteRemindersByNoteTaskId(noteTaskId: Int)
+
+    @Update
+    suspend fun update(reminder: Reminder)
 }

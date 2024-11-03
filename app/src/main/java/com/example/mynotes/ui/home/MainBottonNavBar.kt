@@ -1,26 +1,24 @@
-package com.example.mynotes.ui.components
+package com.example.mynotes.ui.home
 
+import android.util.MutableBoolean
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.mynotes.ui.theme.MyNotesTheme
 
 @Composable
 fun MainBottomNavBar(
     onNotesClick: () -> Unit,
     onTasksClick: () -> Unit,
-    onNewNoteClick: () -> Unit
 ) {
     BottomAppBar(
         actions = {
@@ -46,15 +44,17 @@ fun MainBottomNavBar(
                     )
                 }
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNewNoteClick,
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-            ) {
-                Icon(Icons.Filled.Add, "Nueva nota")
-            }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainBottomNavBarPreview() {
+    MyNotesTheme {
+        MainBottomNavBar(
+            onNotesClick = {},
+            onTasksClick = {}
+        )
+    }
 }
