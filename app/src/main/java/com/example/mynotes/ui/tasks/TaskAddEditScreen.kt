@@ -33,19 +33,9 @@ import kotlinx.coroutines.launch
 
 // Add/Edit Note Destination
 object AddEditTaskDestination : NavigationDestination {
-    //const val taskIdArg = "taskId"
-
-    // Implementación de las propiedades requeridas por la interfaz
-    //override val route = "addEditTask/{$taskIdArg}"
-
-    // Puedes definir un valor de recurso de cadena para el título
-    //override val titleRes = R.string.edit_note // Asegúrate de tener este recurso definido
-
-    // Método para construir la ruta con un ID específico
-    //fun route(taskId: Int) = "addEditTask/$taskId"
     override val titleRes = R.string.edit_task
+    override val route = "task_edit"
     const val taskIdArg = "taskId"
-    override val route = "addEditTask/{$taskIdArg}"
     val routeWithArgs = "$route/{$taskIdArg}"
 }
 

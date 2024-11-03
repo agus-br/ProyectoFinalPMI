@@ -14,7 +14,7 @@ import com.example.mynotes.ui.notes.NoteAddEditScreen
 import com.example.mynotes.ui.notes.NoteEntryDestination
 import com.example.mynotes.ui.notes.NoteEntryScreen
 import com.example.mynotes.ui.settings.SettingDestination
-import com.example.mynotes.ui.settings.SettingScreen
+import com.example.mynotes.ui.settings.SettingsScreen
 import com.example.mynotes.ui.tasks.AddEditTaskDestination
 import com.example.mynotes.ui.tasks.TaskAddEditScreen
 import com.example.mynotes.ui.tasks.TaskEntryDestination
@@ -35,14 +35,14 @@ fun MyNotesNavHost(
             HomeScreen(
                 onClickActionSettings = { navController.navigate(SettingDestination.route) },
                 navigateToNewNote = { navController.navigate(NoteEntryDestination.route)},
-                navigateToUpdateNote = { navController.navigate("${AddEditNoteDestination.route}/${it}") },
+                navigateToUpdateNote = { navController.navigate("${AddEditNoteDestination.route}/$it") },
                 navigateToNewTask = { navController.navigate(TaskEntryDestination.route) },
-                navigateToUpdateTask = { navController.navigate("${AddEditTaskDestination.route}/${it}") }
+                navigateToUpdateTask = { navController.navigate("${AddEditTaskDestination.route}/$it") }
             )
         }
 
         composable(route = SettingDestination.route) {
-            SettingScreen(
+            SettingsScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )

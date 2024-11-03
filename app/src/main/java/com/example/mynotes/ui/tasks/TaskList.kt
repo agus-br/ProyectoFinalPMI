@@ -23,9 +23,9 @@ fun TaskList(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier
+            .padding(8.dp),
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

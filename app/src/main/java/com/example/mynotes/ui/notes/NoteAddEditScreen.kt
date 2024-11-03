@@ -24,9 +24,9 @@ import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
 
 object AddEditNoteDestination : NavigationDestination {
-    override val titleRes = R.string.edit_task
+    override val route = "note_edit"
+    override val titleRes = R.string.edit_note
     const val noteIdArg = "noteId"
-    override val route = "addEditNote/{$noteIdArg}"
     val routeWithArgs = "$route/{$noteIdArg}"
 }
 

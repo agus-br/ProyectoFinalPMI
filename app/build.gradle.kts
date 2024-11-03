@@ -60,6 +60,8 @@ dependencies {
 
     implementation(libs.androidx.compiler)
 
+    implementation(libs.android.material.icons.extended)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

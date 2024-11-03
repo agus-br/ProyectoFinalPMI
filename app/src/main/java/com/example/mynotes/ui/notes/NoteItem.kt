@@ -22,8 +22,8 @@ fun NoteItem(
     Card(
         modifier = modifier
             .fillMaxWidth() // Ocupar todo el ancho
-            .wrapContentHeight(), // Espaciado externo
-            //.heightIn(min = 10.dp, max = 250.dp), // Altura mínima y máxima
+            .wrapContentHeight() // Espaciado externo
+            .heightIn(min = 10.dp, max = 250.dp), // Altura mínima y máxima
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(

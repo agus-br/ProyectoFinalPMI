@@ -5,7 +5,7 @@
     <!-- Screens Titles -->
     <string name="create_note">Nueva Nota</string>
     <string name="edit_note">Editar Nota</string>
-    <string name="tasks">Mis Tareas</string>
+    <string name="tasks">Mis tareas</string>
     <string name="create_task">Nueva Tarea</string>
     <string name="edit_task">Editar Tarea</string>
 
@@ -24,8 +24,8 @@
     <string name="back_button">Atrás</string>
 
     <!-- Search Bar -->
-    <string name="search_note_placeholder">Buscar Nota</string>
-    <string name="search_task_placeholder">Buscar Tarea</string>
+    <string name="search_note_placeholder">Buscar mis notas</string>
+    <string name="search_task_placeholder">Buscar mis tareas</string>
 
     <!-- Task-specific Strings -->
     <string name="set_reminder">Establecer Recordatorio</string>

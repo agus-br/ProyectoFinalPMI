@@ -34,7 +34,6 @@ fun TaskItem(
         modifier = modifier
             .fillMaxWidth() // Ocupar todo el ancho
             .wrapContentHeight(), // Altura mínima y máxima
-        colors = CardDefaults.cardColors(containerColor = Color.LightGray), // Color de fondo
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row( // Usar Row para organizar el checkbox al lado izquierdo de la tarea

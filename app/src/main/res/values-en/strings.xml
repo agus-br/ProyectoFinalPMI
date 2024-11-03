@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyNotes App</string>
+    <string name="create_note">New Note</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="tasks">My tasks</string>
+    <string name="create_task">New Task</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="content">Write your note here...</string>
+    <string name="add_note">New Note</string>
+    <string name="add_task">New Task</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="back_button">Back</string>
+    <string name="search_note_placeholder">Search my notes</string>
+    <string name="search_task_placeholder">Search my tasks</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="due_date">Due Date</string>
+    <string name="task_saved">Task Saved</string>
+    <string name="note_saved">Note Saved</string>
+    <string name="delete_confirmation">Are you sure to do it?</string>
+    <string name="error_onDelete_note">Error deleting note</string>
+    <string name="error_onDelete_task">Error deleting tast</string>
+    <string name="notes">My notes</string>
+</resources>

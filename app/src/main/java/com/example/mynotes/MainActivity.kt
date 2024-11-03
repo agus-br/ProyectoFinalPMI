@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.ui.settings.SettingsViewModel
 import com.example.mynotes.ui.theme.MyNotesTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,10 +15,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyNotesTheme {
-                MyNotesApp()
-            }
+            InitApp()
         }
+    }
+}
+
+@Composable
+fun InitApp(
+    themeViewModel: SettingsViewModel = viewModel()
+) {
+    // Observa el estado del tema en el ViewModel
+    val isDarkTheme = themeViewModel.isDarkTheme
+
+    MyNotesTheme(darkTheme = isDarkTheme) {
+        MyNotesApp()
     }
 }
 

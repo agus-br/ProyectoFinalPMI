@@ -52,7 +52,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var currentListShowing by remember { mutableIntStateOf(1) }
-    val homeUiState by viewModel.homeUiState.collectAsState()
+    val homeUiStateNotes by viewModel.homeUiStateNotes.collectAsState()
+    val homeUiStateTasks by viewModel.homeUiStateTasks.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -79,7 +80,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = navigateToNewNote,
+                onClick = if (currentListShowing == 1) navigateToNewNote else navigateToNewTask,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
             ) {
@@ -98,8 +99,8 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeBody(
             currentListShowing = currentListShowing,
-            itemList = homeUiState.noteTaskList,
-            onItemClick =navigateToUpdateNote,
+            itemList = if (currentListShowing == 1) homeUiStateNotes.noteTaskList else homeUiStateTasks.noteTaskList,
+            onItemClick = if (currentListShowing == 1) navigateToUpdateNote else navigateToUpdateTask,
             modifier = modifier.padding(innerPadding)
         )
     }
