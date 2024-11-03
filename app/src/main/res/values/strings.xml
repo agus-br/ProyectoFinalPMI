@@ -1,12 +1,11 @@
 <resources>
     <!-- App name -->
-    <string name="app_name">My Notes App</string>
+    <string name="app_name" translatable="false">MyNotes App</string>
 
     <!-- Screens Titles -->
-    <string name="notes">Mis Notas</string>
     <string name="create_note">Nueva Nota</string>
     <string name="edit_note">Editar Nota</string>
-    <string name="tasks">Mis Tareas</string>
+    <string name="tasks">Mis tareas</string>
     <string name="create_task">Nueva Tarea</string>
     <string name="edit_task">Editar Tarea</string>
 
@@ -25,8 +24,8 @@
     <string name="back_button">Atrás</string>
 
     <!-- Search Bar -->
-    <string name="search_note_placeholder">Buscar Nota</string>
-    <string name="search_task_placeholder">Buscar Tarea</string>
+    <string name="search_note_placeholder">Buscar mis notas</string>
+    <string name="search_task_placeholder">Buscar mis tareas</string>
 
     <!-- Task-specific Strings -->
     <string name="set_reminder">Establecer Recordatorio</string>
@@ -40,4 +39,5 @@
     <string name="delete_confirmation">¿Estás seguro de querer hacerlo?</string>
     <string name="error_onDelete_note">Error al eliminar la nota</string>
     <string name="error_onDelete_task">Error al eliminar la tarea</string>
+    <string name="notes">Mis notas</string>
 </resources>
