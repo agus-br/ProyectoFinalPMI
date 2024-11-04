@@ -118,7 +118,7 @@ private fun HomeBody(
                 text = "No hay elementos",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(contentPadding),
+                modifier = Modifier.padding(8.dp),
             )
         } else {
             if(currentListShowing == 1){

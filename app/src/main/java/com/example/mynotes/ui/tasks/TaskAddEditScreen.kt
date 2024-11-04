@@ -19,6 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
+import com.example.mynotes.ui.components.ActionBottonBar
+import com.example.mynotes.ui.components.ActionTopNavBar
+import com.example.mynotes.ui.notes.AddEditNoteDestination
 import com.example.mynotes.ui.notes.NoteAddEditScreen
 import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
@@ -43,13 +46,19 @@ fun TaskAddEditScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(AddEditTaskDestination.titleRes)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            ActionTopNavBar(
+                title = stringResource(R.string.add_task),
+                canNavigateBack = true,
+                navigateUp = onNavigateUp,
+                enableActionButtons = true,
+                onSetReminder = {}
+            )
+        },
+        bottomBar = {
+            ActionBottonBar(
+                title = viewModel.taskUiState.taskDetails.type.toString(),
+                onActionLeft = {},
+                onActionRight = {}
             )
         },
         modifier = modifier

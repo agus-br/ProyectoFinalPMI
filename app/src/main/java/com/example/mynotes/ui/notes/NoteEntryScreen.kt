@@ -48,7 +48,7 @@ fun NoteEntryScreen(
     Scaffold(
         topBar = {
             MyNotesTopAppBar(
-                title = stringResource(NoteEntryDestination.titleRes),
+                title = stringResource(R.string.add_note),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp,
                 onClickActionSettings = {}
