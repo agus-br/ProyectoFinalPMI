@@ -1,8 +1,5 @@
 package com.example.mynotes.ui.tasks
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -13,21 +10,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
-import com.example.mynotes.ui.notes.AddEditNoteDestination
 import com.example.mynotes.ui.notes.NoteAddEditScreen
-import com.example.mynotes.ui.notes.NoteEntryBody
 import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
 

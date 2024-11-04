@@ -40,4 +40,10 @@
     <string name="error_onDelete_note">Error al eliminar la nota</string>
     <string name="error_onDelete_task">Error al eliminar la tarea</string>
     <string name="notes">Mis notas</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Configuración</string>
+    <string name="dark_mode_option">Modo oscuro</string>
+    <string name="languaje_option">Idioma</string>
+
 </resources>
