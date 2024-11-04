@@ -1,18 +1,18 @@
 package com.example.mynotes.ui.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class SettingsViewModel : ViewModel() {
-    var isDarkTheme by mutableStateOf(false)
+    private val _isDarkTheme = MutableStateFlow(false)
+    val isDarkTheme: StateFlow<Boolean> get() = _isDarkTheme
 
     fun toggleTheme() {
-        isDarkTheme = !isDarkTheme
+        viewModelScope.launch {
+            _isDarkTheme.value = !_isDarkTheme.value
+        }
     }
 }

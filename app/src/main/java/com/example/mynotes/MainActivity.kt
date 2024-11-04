@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.ui.settings.SettingsViewModel
@@ -25,7 +27,7 @@ fun InitApp(
     themeViewModel: SettingsViewModel = viewModel()
 ) {
     // Observa el estado del tema en el ViewModel
-    val isDarkTheme = themeViewModel.isDarkTheme
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
 
     MyNotesTheme(darkTheme = isDarkTheme) {
         MyNotesApp()

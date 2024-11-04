@@ -26,4 +26,7 @@
     <string name="error_onDelete_note">Error deleting note</string>
     <string name="error_onDelete_task">Error deleting tast</string>
     <string name="notes">My notes</string>
+    <string name="settings_title">Settings</string>
+    <string name="dark_mode_option">Dark mode</string>
+    <string name="languaje_option">Languaje</string>
 </resources>

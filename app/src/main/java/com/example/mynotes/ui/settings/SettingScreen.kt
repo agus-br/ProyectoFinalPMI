@@ -1,12 +1,10 @@
 package com.example.mynotes.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,7 +19,7 @@ import com.example.mynotes.ui.theme.MyNotesTheme
 
 object SettingDestination {
     const val route = "settings"
-    val titleRes = R.string.title
+    val titleRes = R.string.settings_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,37 +44,52 @@ fun SettingsScreen(
         },
         content = { padding ->
             Column(modifier = modifier.padding(padding).padding(16.dp)) {
-                Text(
-                    text = "Select Theme",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // Ícono para el tema claro
-                    Icon(
-                        imageVector = Icons.Filled.ModeLight,
-                        contentDescription = "Light Mode",
-                        modifier = Modifier.size(24.dp)
+                    Text(
+                        text = stringResource(R.string.dark_mode_option),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .wrapContentHeight()
                     )
 
-                    Switch(
-                        checked = isDarkTheme,
-                        onCheckedChange = {
-                            themeViewModel.isDarkTheme = it
-                        }
-                    )
-
-                    // Ícono para el tema oscuro
-                    Icon(
-                        imageVector = Icons.Filled.ModeNight,
-                        contentDescription = "Dark Mode",
-                        modifier = Modifier.size(24.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(
+                                width = 80.dp,
+                                height = 30.dp
+                            )
+                    ) { // Ajusta el ancho y alto aquí
+                        Switch(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(),
+                            checked = isDarkTheme,
+                            onCheckedChange = {
+                                themeViewModel.toggleTheme() // Alternar tema
+                            },
+                            thumbContent = {
+                                if (isDarkTheme) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Bedtime,
+                                        contentDescription = "Dark Mode",
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Filled.Brightness7,
+                                        contentDescription = "Light Mode",
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

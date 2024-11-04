@@ -7,11 +7,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -19,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
+import com.example.mynotes.ui.components.ActionBottonBar
+import com.example.mynotes.ui.components.ActionTopNavBar
 import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
@@ -42,13 +42,19 @@ fun NoteAddEditScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(AddEditNoteDestination.titleRes)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            ActionTopNavBar(
+                title = stringResource(AddEditNoteDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onNavigateUp,
+                enableActionButtons = true,
+                onSetReminder = {}
+            )
+        },
+        bottomBar = {
+            ActionBottonBar(
+                title = viewModel.noteUiState.noteDetails.type.toString(),
+                onActionLeft = {},
+                onActionRight = {}
             )
         },
         modifier = modifier
