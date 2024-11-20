@@ -56,6 +56,13 @@ class NoteAddEditViewModel(
         }
     }
 
+    fun deleteNoteTask() {
+        viewModelScope.launch {
+            repository.deleteNoteTask(noteUiState.noteDetails.toNote())
+        }
+    }
+
+
     /*// Guardar o actualizar una nota en el repositorio
     fun saveNoteTask() {
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.home
+package com.example.mynotes.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -21,6 +21,7 @@ import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.components.ActionBottonBar
 import com.example.mynotes.ui.components.ActionTopNavBar
+import com.example.mynotes.ui.components.BottomActionBarModal
 import com.example.mynotes.ui.notes.AddEditNoteDestination
 import com.example.mynotes.ui.notes.NoteAddEditScreen
 import com.example.mynotes.ui.theme.MyNotesTheme
@@ -55,10 +56,16 @@ fun TaskAddEditScreen(
             )
         },
         bottomBar = {
-            ActionBottonBar(
-                title = viewModel.taskUiState.taskDetails.type.toString(),
-                onActionLeft = {},
-                onActionRight = {}
+            BottomActionBarModal(
+                onDeleteClick = {
+                    viewModel.deleteTask()
+                    onNavigateBack()
+                },
+                onSelectImage = {},
+                onTakePhoto = {},
+                onTakeAudio = {},
+                onTakeVideo = {},
+                content = viewModel.taskUiState.taskDetails.type.toString(),
             )
         },
         modifier = modifier

@@ -64,4 +64,10 @@ class TaskAddEditViewModel(
         }
     }
 
+    fun deleteTask() {
+        viewModelScope.launch {
+            repository.deleteNoteTask(taskUiState.taskDetails.toTask())
+        }
+    }
+
 }

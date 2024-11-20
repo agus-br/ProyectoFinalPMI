@@ -53,13 +53,31 @@ android {
 
 dependencies {
 
+    // ExoPlayer
+    implementation("com.google.android.exoplayer:exoplayer:2.15.1")
 
+    // Coil. Para cargar imagenes de manera asyncrona
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Window Size Class
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
+
+    //implementation("androidx.compose.ui:ui")
+    //implementation("androidx.compose.ui:ui-graphics")
+    //implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui-tooling")
+
+    //Permisos creo
+    implementation("com.google.accompanist:accompanist-permissions:0.36.0")
+
+    // Room
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
     implementation(libs.androidx.compiler)
 
+    // Material Icons Extended
     implementation(libs.material.icons.extended)
 
     implementation(libs.androidx.core.ktx)
@@ -72,6 +90,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

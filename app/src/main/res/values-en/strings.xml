@@ -29,4 +29,5 @@
     <string name="settings_title">Settings</string>
     <string name="dark_mode_option">Dark mode</string>
     <string name="languaje_option">Languaje</string>
+    <string name="record_audio">Permission to record</string>
 </resources>

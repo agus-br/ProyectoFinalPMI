@@ -19,6 +19,7 @@ import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.components.ActionBottonBar
 import com.example.mynotes.ui.components.ActionTopNavBar
+import com.example.mynotes.ui.components.BottomActionBarModal
 import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
@@ -51,10 +52,16 @@ fun NoteAddEditScreen(
             )
         },
         bottomBar = {
-            ActionBottonBar(
-                title = viewModel.noteUiState.noteDetails.type.toString(),
-                onActionLeft = {},
-                onActionRight = {}
+            BottomActionBarModal(
+                onDeleteClick = {
+                    viewModel.deleteNoteTask()
+                    navigateBack()
+                },
+                onSelectImage = {},
+                onTakePhoto = {},
+                onTakeAudio = {},
+                onTakeVideo = {},
+                content = viewModel.noteUiState.noteDetails.type.toString(),
             )
         },
         modifier = modifier

@@ -27,6 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.MyNotesTopAppBar
 import com.example.mynotes.R
 import com.example.mynotes.ui.AppViewModelProvider
+import com.example.mynotes.ui.components.ActionBar
+import com.example.mynotes.ui.components.BottomActionBarModal
 import com.example.mynotes.ui.theme.MyNotesTheme
 import kotlinx.coroutines.launch
 
@@ -52,6 +54,16 @@ fun NoteEntryScreen(
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp,
                 onClickActionSettings = {}
+            )
+        },
+        bottomBar = {
+            BottomActionBarModal(
+                onDeleteClick = {},
+                onSelectImage = {},
+                onTakePhoto = {},
+                onTakeAudio = {},
+                onTakeVideo = {},
+                content = viewModel.noteUiState.noteDetails.type.toString(),
             )
         },
         modifier = modifier

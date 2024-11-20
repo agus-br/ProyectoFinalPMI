@@ -29,6 +29,8 @@ import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.ui.notes.NoteList
 import com.example.mynotes.ui.tasks.TaskList
 import com.example.mynotes.ui.theme.MyNotesTheme
+import com.example.mynotes.ui.components.SearchBar
+import com.example.mynotes.ui.components.MainBottomNavBar
 
 object HomeDestination : NavigationDestination {
     override val route = "home"

@@ -46,4 +46,7 @@
     <string name="dark_mode_option">Modo oscuro</string>
     <string name="languaje_option">Idioma</string>
 
+    <!-- Audio -->
+    <string name="record_audio">Permiso para grabar</string>
+
 </resources>
