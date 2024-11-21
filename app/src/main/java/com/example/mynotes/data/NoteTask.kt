@@ -11,7 +11,7 @@ data class NoteTask(
     val description: String,
     val type: NoteTaskType,
     val dueDate: Long? = null, // Solo para tareas
-    val isCompleted: Boolean = false, // Solo para tareas
+    var isCompleted: Boolean = false, // Solo para tareas
 ) {
     fun isNote(): Boolean = type == NoteTaskType.NOTE
 

@@ -7,11 +7,14 @@
     import androidx.lifecycle.viewmodel.initializer
     import androidx.lifecycle.viewmodel.viewModelFactory
     import com.example.mynotes.MyNotesApplication
+    import com.example.mynotes.preferences.ThemePreferences
     import com.example.mynotes.ui.home.HomeViewModel
     import com.example.mynotes.ui.notes.NoteAddEditViewModel
     import com.example.mynotes.ui.notes.NoteEntryViewModel
+    import com.example.mynotes.ui.settings.SettingsViewModel
     import com.example.mynotes.ui.tasks.TaskAddEditViewModel
     import com.example.mynotes.ui.tasks.TaskEntryViewModel
+    import com.example.mynotes.ui.tasks.TaskItemViewModel
 
     object AppViewModelProvider {
         val Factory = viewModelFactory {
@@ -50,6 +53,15 @@
                     myNotesApplication().container.noteTaskRepository
                 )
             }
+
+            // Inicializador para TaskItemViewModel
+            initializer {
+                TaskItemViewModel(
+                    this.createSavedStateHandle(),
+                    myNotesApplication().container.noteTaskRepository
+                )
+            }
+
         }
     }
 

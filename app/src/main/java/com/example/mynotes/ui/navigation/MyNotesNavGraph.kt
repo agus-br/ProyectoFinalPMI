@@ -44,7 +44,7 @@ fun MyNotesNavHost(
         composable(route = SettingDestination.route) {
             SettingsScreen(
                 navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
             )
         }
 

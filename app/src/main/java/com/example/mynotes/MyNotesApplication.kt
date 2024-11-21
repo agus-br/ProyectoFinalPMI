@@ -11,8 +11,16 @@ class MyNotesApplication : Application() {
      */
     lateinit var container: AppContainer
 
+    companion object {
+        private lateinit var instance: MyNotesApplication
+        fun getInstance(): MyNotesApplication {
+            return instance
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this // Asigna la instancia en onCreate
         container = AppDataContainer(this)
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.mynotes.R
 import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskType
+import com.example.mynotes.ui.home.HomeViewModel
 import com.example.mynotes.ui.theme.MyNotesTheme
 
 @Composable
@@ -40,6 +41,7 @@ fun TaskList(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun TaskListPreview() {
@@ -120,3 +122,4 @@ fun TaskListPreview() {
         )
     }
 }
+*/

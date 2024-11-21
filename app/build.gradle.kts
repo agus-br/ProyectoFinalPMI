@@ -53,6 +53,9 @@ android {
 
 dependencies {
 
+    // Preferencias
+    //implementation("androidx.datastore:datastore-preferences:1.1.1")
+
     // ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.15.1")
 
@@ -72,6 +75,7 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.core.ktx)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 

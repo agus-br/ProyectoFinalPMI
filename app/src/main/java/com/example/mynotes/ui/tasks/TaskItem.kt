@@ -7,21 +7,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskType
+import com.example.mynotes.ui.AppViewModelProvider
+import com.example.mynotes.ui.home.HomeViewModel
 import com.example.mynotes.ui.theme.MyNotesTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskItem(
     task: NoteTask,
+    viewModel: TaskItemViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
 
     var checked by remember { mutableStateOf(task.isCompleted) }
 
@@ -42,9 +50,21 @@ fun TaskItem(
             Checkbox(
                 checked = checked, // Estado del checkbox
                 onCheckedChange = {
-                    if (checked) checked = false
-                    else checked = true
-                } // Callback cuando cambia el estado
+                    if (checked) {
+                        checked = false
+                        task.isCompleted = false
+                        coroutineScope.launch {
+                            viewModel.updateTask(task)
+                        }
+                    }
+                    else {
+                        checked = true
+                        task.isCompleted = true
+                        coroutineScope.launch {
+                            viewModel.updateTask(task)
+                        }
+                    }
+                }
             )
 
             // Columna con el contenido de la tarea (título, descripción, contenido)
@@ -74,6 +94,7 @@ fun TaskItem(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun TaskItemPreview() {
@@ -94,4 +115,4 @@ fun TaskItemPreview() {
             )
         )
     }
-}
+}*/

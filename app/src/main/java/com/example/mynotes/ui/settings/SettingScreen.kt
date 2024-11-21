@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,7 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     canNavigateBack: Boolean = true,
-    themeViewModel: SettingsViewModel = viewModel() // Obtén el ViewModel
+    themeViewModel: SettingsViewModel = viewModel()
 ) {
     val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
 
@@ -57,39 +58,33 @@ fun SettingsScreen(
                             .padding(bottom = 8.dp)
                             .wrapContentHeight()
                     )
-
-                    Box(
+                    Spacer(modifier = Modifier.weight(2f))
+                    // Ajusta el ancho y alto aquí
+                    Switch(
                         modifier = Modifier
-                            .size(
-                                width = 80.dp,
-                                height = 30.dp
-                            )
-                    ) { // Ajusta el ancho y alto aquí
-                        Switch(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(),
-                            checked = isDarkTheme,
-                            onCheckedChange = {
-                                themeViewModel.toggleTheme() // Alternar tema
-                            },
-                            thumbContent = {
-                                if (isDarkTheme) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Bedtime,
-                                        contentDescription = "Dark Mode",
-                                        modifier = Modifier.size(12.dp)
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Filled.Brightness7,
-                                        contentDescription = "Light Mode",
-                                        modifier = Modifier.size(12.dp)
-                                    )
-                                }
+                            .fillMaxWidth()
+                            .wrapContentWidth(),
+                        checked = isDarkTheme,
+                        onCheckedChange = {
+                            themeViewModel.toggleTheme()
+                        },
+                        thumbContent = {
+                            if (isDarkTheme) {
+                                Icon(
+                                    imageVector = Icons.Filled.Bedtime,
+                                    contentDescription = "Dark Mode",
+                                    modifier = Modifier.size(12.dp)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Filled.Brightness7,
+                                    contentDescription = "Light Mode",
+                                    modifier = Modifier.size(12.dp)
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
+
                 }
             }
         }

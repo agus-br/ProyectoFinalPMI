@@ -13,6 +13,7 @@ materialIconsExtended = "1.7.5"
 navigationCompose = "2.8.3"
 runtimeAndroid = "1.7.5"
 room = "2.5.2"
+coreKtxVersion = "1.6.1"
 
 [libraries]
 android-material-icons-extended = { module = "android.compose.material:material-icons-extended" }
@@ -37,6 +38,7 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

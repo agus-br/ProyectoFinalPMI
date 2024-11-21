@@ -141,6 +141,7 @@ private fun HomeBody(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyTaskListPreview() {
@@ -165,7 +166,7 @@ fun HomeBodyNoteListPreview() {
         )
     }
 }
-
+*/
 
 var noteList = listOf(
     NoteTask(
