@@ -61,13 +61,6 @@ object NoteTestDestination : NavigationDestination {
     val routeWithArgs = "$route?$noteIdArg={$noteIdArg}" // Argumento opcional
 }
 
-fun createMediaFile(uri: Uri, noteTaskId: Int, mediaType: MediaType): MediaFile {
-    return MediaFile(
-        noteTaskId = noteTaskId,
-        filePath = uri.toString(), // Puedes usar una conversión más avanzada si necesitas la ruta completa
-        mediaType = mediaType
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
