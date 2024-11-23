@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
 data class MediaFile(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val noteTaskId: Int,
+    var noteTaskId: Int,
     val filePath: String,
     val mediaType: MediaType // Indica si es imagen, video o audio
 )

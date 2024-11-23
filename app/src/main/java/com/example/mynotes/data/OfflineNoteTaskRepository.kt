@@ -20,8 +20,9 @@ class OfflineNoteTaskRepository(
     override fun getUncompletedTaskStream(): Flow<List<NoteTask>> =
         noteTaskDao.getCompleteTasks()
 
-    override suspend fun insertNoteTask(noteTask: NoteTask) {
-        noteTaskDao.insert(noteTask)
+    override suspend fun insertNoteTask(noteTask: NoteTask): Int {
+        val noteId = noteTaskDao.insert(noteTask)
+        return noteId.toInt()
     }
 
     override suspend fun deleteNoteTask(noteTask: NoteTask) {

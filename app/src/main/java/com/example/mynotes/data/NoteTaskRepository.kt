@@ -26,7 +26,7 @@ interface NoteTaskRepository {
     /**
      * Insert a new note task.
      */
-    suspend fun insertNoteTask(noteTask: NoteTask)
+    suspend fun insertNoteTask(noteTask: NoteTask): Int
 
     /**
      * Delete a specific note task.

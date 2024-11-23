@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class NoteTask(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val title: String,
-    val description: String,
+    var title: String,
+    var description: String,
     val type: NoteTaskType,
     val dueDate: Long? = null, // Solo para tareas
     var isCompleted: Boolean = false, // Solo para tareas

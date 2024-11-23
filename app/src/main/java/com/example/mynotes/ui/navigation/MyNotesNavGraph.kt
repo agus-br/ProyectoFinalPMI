@@ -13,6 +13,8 @@ import com.example.mynotes.ui.notes.AddEditNoteDestination
 import com.example.mynotes.ui.notes.NoteAddEditScreen
 import com.example.mynotes.ui.notes.NoteEntryDestination
 import com.example.mynotes.ui.notes.NoteEntryScreen
+import com.example.mynotes.ui.notes.NoteTestDestination
+import com.example.mynotes.ui.notes.NoteTestScreen
 import com.example.mynotes.ui.settings.SettingDestination
 import com.example.mynotes.ui.settings.SettingsScreen
 import com.example.mynotes.ui.tasks.AddEditTaskDestination
@@ -34,8 +36,8 @@ fun MyNotesNavHost(
         composable(route = HomeDestination.route) {
             HomeScreen(
                 onClickActionSettings = { navController.navigate(SettingDestination.route) },
-                navigateToNewNote = { navController.navigate(NoteEntryDestination.route)},
-                navigateToUpdateNote = { navController.navigate("${AddEditNoteDestination.route}/$it") },
+                navigateToNewNote = { navController.navigate("${NoteTestDestination.route}/0")},
+                navigateToUpdateNote = { navController.navigate("${NoteTestDestination.route}/$it") },
                 navigateToNewTask = { navController.navigate(TaskEntryDestination.route) },
                 navigateToUpdateTask = { navController.navigate("${AddEditTaskDestination.route}/$it") }
             )
@@ -48,6 +50,24 @@ fun MyNotesNavHost(
             )
         }
 
+        composable(
+            route = "${NoteTestDestination.route}/{${NoteTestDestination.noteIdArg}}",
+            arguments = listOf(
+                navArgument(NoteTestDestination.noteIdArg) {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt(NoteTestDestination.noteIdArg)
+            NoteTestScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+
+
+
+/*
         composable(route = NoteEntryDestination.route) {
             NoteEntryScreen(
                 navigateBack = { navController.popBackStack() },
@@ -66,7 +86,7 @@ fun MyNotesNavHost(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )
-        }
+        }*/
 
         composable(route = TaskEntryDestination.route) {
             TaskEntryScreen(

@@ -11,6 +11,7 @@
     import com.example.mynotes.ui.home.HomeViewModel
     import com.example.mynotes.ui.notes.NoteAddEditViewModel
     import com.example.mynotes.ui.notes.NoteEntryViewModel
+    import com.example.mynotes.ui.notes.NoteTestViewModel
     import com.example.mynotes.ui.settings.SettingsViewModel
     import com.example.mynotes.ui.tasks.TaskAddEditViewModel
     import com.example.mynotes.ui.tasks.TaskEntryViewModel
@@ -49,6 +50,14 @@
             // Inicializador para AddEditTaskViewModel
             initializer {
                 TaskAddEditViewModel(
+                    this.createSavedStateHandle(),
+                    myNotesApplication().container.noteTaskRepository
+                )
+            }
+
+            // Inicializador para AddEditTaskViewModel
+            initializer {
+                NoteTestViewModel(
                     this.createSavedStateHandle(),
                     myNotesApplication().container.noteTaskRepository
                 )

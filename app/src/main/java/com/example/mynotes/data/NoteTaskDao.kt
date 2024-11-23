@@ -18,7 +18,7 @@ interface NoteTaskDao {
     fun getNoteTask(id: Int): Flow<NoteTask>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(noteTask: NoteTask)
+    suspend fun insert(noteTask: NoteTask): Long
 
     @Delete
     suspend fun delete(noteTask: NoteTask)
