@@ -9,18 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mynotes.ui.home.HomeDestination
 import com.example.mynotes.ui.home.HomeScreen
-import com.example.mynotes.ui.notes.AddEditNoteDestination
-import com.example.mynotes.ui.notes.NoteAddEditScreen
-import com.example.mynotes.ui.notes.NoteEntryDestination
-import com.example.mynotes.ui.notes.NoteEntryScreen
 import com.example.mynotes.ui.notes.NoteTestDestination
 import com.example.mynotes.ui.notes.NoteTestScreen
 import com.example.mynotes.ui.settings.SettingDestination
 import com.example.mynotes.ui.settings.SettingsScreen
 import com.example.mynotes.ui.tasks.AddEditTaskDestination
-import com.example.mynotes.ui.tasks.TaskAddEditScreen
-import com.example.mynotes.ui.tasks.TaskEntryDestination
-import com.example.mynotes.ui.tasks.TaskEntryScreen
+import com.example.mynotes.ui.tasks.AddEditTaskScreen
 
 @Composable
 fun MyNotesNavHost(
@@ -38,7 +32,7 @@ fun MyNotesNavHost(
                 onClickActionSettings = { navController.navigate(SettingDestination.route) },
                 navigateToNewNote = { navController.navigate("${NoteTestDestination.route}/0")},
                 navigateToUpdateNote = { navController.navigate("${NoteTestDestination.route}/$it") },
-                navigateToNewTask = { navController.navigate(TaskEntryDestination.route) },
+                navigateToNewTask = { navController.navigate("${AddEditTaskDestination.route}/0") },
                 navigateToUpdateTask = { navController.navigate("${AddEditTaskDestination.route}/$it") }
             )
         }
@@ -65,47 +59,21 @@ fun MyNotesNavHost(
             )
         }
 
-
-
-/*
-        composable(route = NoteEntryDestination.route) {
-            NoteEntryScreen(
-                navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
-
-        // Pantalla para editar notas
         composable(
-            route = AddEditNoteDestination.routeWithArgs,
-            arguments = listOf(navArgument(AddEditNoteDestination.noteIdArg) {
-                type = NavType.IntType
-            })
-        ) {
-            NoteAddEditScreen(
-                navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+            route = "${AddEditTaskDestination.route}/{${AddEditTaskDestination.taskIdArg}}",
+            arguments = listOf(
+                navArgument(AddEditTaskDestination.taskIdArg) {
+                    type = NavType.IntType
+                }
             )
-        }*/
-
-        composable(route = TaskEntryDestination.route) {
-            TaskEntryScreen(
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getInt(AddEditTaskDestination.taskIdArg)
+            AddEditTaskScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )
         }
 
-        // Pantalla para añadir o editar notas
-        composable(
-            route = AddEditTaskDestination.routeWithArgs,
-            arguments = listOf(navArgument(AddEditTaskDestination.taskIdArg) {
-                type = NavType.IntType
-            })
-        ) {
-            TaskAddEditScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
+
     }
 }

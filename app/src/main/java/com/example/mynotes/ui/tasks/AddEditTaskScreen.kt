@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.notes
+package com.example.mynotes.ui.tasks
 
 import android.net.Uri
 import android.util.Log
@@ -46,24 +46,23 @@ import com.example.mynotes.ui.components.BottomActionBarModal
 import com.example.mynotes.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 
-object NoteTestDestination : NavigationDestination {
-    override val route = "note_edit_test"
-    override val titleRes = R.string.edit_note
-    const val noteIdArg = "noteId"
-    val routeWithArgs = "$route?$noteIdArg={$noteIdArg}" // Argumento opcional
+object AddEditTaskDestination : NavigationDestination {
+    override val route = "add_edit_task"
+    override val titleRes = R.string.edit_task
+    const val taskIdArg = "noteId"
+    val routeWithArgs = "$route?$taskIdArg={$taskIdArg}" // Argumento opcional
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteTestScreen(
+fun AddEditTaskScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NoteTestViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: AddEditTaskViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val note: NoteTask = viewModel.noteTask
+    val task: NoteTask = viewModel.task
 
     var mediaFiles by remember { mutableStateOf<MutableList<MediaFile>>(mutableListOf()) }
 
@@ -78,8 +77,8 @@ fun NoteTestScreen(
     val context = LocalContext.current
 
 
-    LaunchedEffect(note.id) {
-        viewModel.loadMediaFiles(note.id) // Cargar MediaFiles al iniciar
+    LaunchedEffect(task.id) {
+        viewModel.loadMediaFiles(task.id) // Cargar MediaFiles al iniciar
         // Convertir MediaFiles a URIs y actualizar la lista 'uris'
         viewModel.mediaFiles.collect { mediaFiles ->
             uris = mediaFiles.map { Uri.parse(it.filePath) }
@@ -143,10 +142,11 @@ fun NoteTestScreen(
     Scaffold(
         topBar = {
             ActionTopNavBar(
-                title = stringResource(NoteTestDestination.titleRes),
+                title = stringResource(AddEditTaskDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = onNavigateUp,
-                enableActionButtons = false
+                enableActionButtons = true,
+                onSetReminder = {}
             )
         },
         bottomBar = {
@@ -181,9 +181,9 @@ fun NoteTestScreen(
             item {
                 // Campo de título
                 OutlinedTextField(
-                    value = note.title,
+                    value = task.title,
                     onValueChange = {
-                        viewModel.updateNoteTask(title = it, description = note.description)
+                        viewModel.updateNoteTask(title = it, description = task.description)
                     },
                     label = { Text(stringResource(R.string.notes)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -201,9 +201,9 @@ fun NoteTestScreen(
             item {
                 // Campo de descripción
                 OutlinedTextField(
-                    value = note.description,
+                    value = task.description,
                     onValueChange = {
-                        viewModel.updateNoteTask(title = note.title, description = it)
+                        viewModel.updateNoteTask(title = task.title, description = it)
                     },
                     label = { Text(stringResource(R.string.description)) },
                     modifier = Modifier
@@ -263,12 +263,12 @@ fun NoteTestScreen(
                     onClick = {
                         coroutineScope.launch {
                             // Guarda la nota papu
-                            val noteId = viewModel.saveNoteTask()
+                            val taskId = viewModel.saveNoteTask()
 
-                            if(noteId > 0){
+                            if(taskId > 0){
                                 // Guardar los MediaFiles en la base de datos
                                 mediaFiles.forEach { mediaFile ->
-                                    mediaFile.noteTaskId = noteId // Actualizar el noteTaskId
+                                    mediaFile.noteTaskId = taskId // Actualizar el noteTaskId
                                     viewModel.addMediaFile(mediaFile.noteTaskId, mediaFile.filePath, mediaFile.mediaType)
                                 }
 

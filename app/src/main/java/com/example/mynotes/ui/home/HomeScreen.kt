@@ -17,18 +17,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.MyNotesTopAppBar
 import com.example.mynotes.R
 import com.example.mynotes.data.NoteTask
-import com.example.mynotes.data.NoteTaskType
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.ui.notes.NoteList
 import com.example.mynotes.ui.tasks.TaskList
-import com.example.mynotes.ui.theme.MyNotesTheme
 import com.example.mynotes.ui.components.SearchBar
 import com.example.mynotes.ui.components.MainBottomNavBar
 
@@ -120,7 +117,7 @@ private fun HomeBody(
                 text = "No hay elementos",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(16.dp)
             )
         } else {
             if(currentListShowing == 1){
@@ -140,158 +137,3 @@ private fun HomeBody(
         }
     }
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun HomeBodyTaskListPreview() {
-
-    MyNotesTheme {
-        HomeBody(
-            currentListShowing = 1,
-            itemList = taskList,
-            onItemClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeBodyNoteListPreview() {
-    MyNotesTheme {
-        HomeBody(
-            currentListShowing = 2,
-            itemList = noteList,
-            onItemClick = {}
-        )
-    }
-}
-*/
-
-var noteList = listOf(
-    NoteTask(
-        id = 0,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.NOTE
-    ),
-    NoteTask(
-        id = 1,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me ",
-        type = NoteTaskType.NOTE
-    ),
-    NoteTask(
-        id = 2,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba miedo",
-        type = NoteTaskType.NOTE
-    ),
-    NoteTask(
-        id = 3,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida.",
-        type = NoteTaskType.NOTE
-    ),
-    NoteTask(
-        id = 4,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo quey comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.NOTE
-    ),
-    NoteTask(
-        id = 5,
-        title = "Título de un nota",
-        description = "HoSeré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.NOTE
-    )
-)
-
-var taskList = listOf(
-    NoteTask(
-        id = 0,
-        title = "Título de un nota",
-        description = "Hola",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    ),
-    NoteTask(
-        id = 1,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    ),
-    NoteTask(
-        id = 2,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre.",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    ),
-    NoteTask(
-        id = 3,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    ),
-    NoteTask(
-        id = 4,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    ),
-    NoteTask(
-        id = 5,
-        title = "Título de un nota",
-        description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba " +
-                "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
-                "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
-                "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
-                "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
-                "todo en paz. ",
-        type = NoteTaskType.TASK,
-        isCompleted = false,
-        dueDate = 121245
-    )
-)

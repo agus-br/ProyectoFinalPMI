@@ -9,6 +9,7 @@ class ComposeFileProvider : FileProvider(
     R.xml.filepaths
 ){
     companion object {
+
         fun getImageUri(context: Context): Uri {
             // 1
             val directory = File(context.cacheDir, "images")
@@ -28,6 +29,7 @@ class ComposeFileProvider : FileProvider(
                 file,
             )
         }
+
         fun getImageUris(context: Context, numImages: Int): List<Uri> {
             val uris = mutableListOf<Uri>()
             repeat(numImages) {

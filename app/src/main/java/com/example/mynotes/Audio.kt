@@ -155,23 +155,25 @@ fun PermissionRequestButton(isGranted: Boolean, title: String,
  */
 @Composable
 fun PermissionRationaleDialog(rationaleState: RationaleState) {
-    AlertDialog(onDismissRequest = { rationaleState.onRationaleReply(false) }, title = {
-        Text(text = rationaleState.title)
-    }, text = {
-        Text(text = rationaleState.rationale)
-    }, confirmButton = {
-        TextButton(onClick = {
-            rationaleState.onRationaleReply(true)
-        }) {
-            Text("Continue")
+    AlertDialog(
+        onDismissRequest = { rationaleState.onRationaleReply(false) },
+        title = { Text(text = rationaleState.title) },
+        text = { Text(text = rationaleState.rationale) },
+        confirmButton = {
+            TextButton(
+                onClick = { rationaleState.onRationaleReply(true) }
+            ) {
+                Text("Continue")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { rationaleState.onRationaleReply(false) }
+            ) {
+                Text("Dismiss")
+            }
         }
-    }, dismissButton = {
-        TextButton(onClick = {
-            rationaleState.onRationaleReply(false)
-        }) {
-            Text("Dismiss")
-        }
-    })
+    )
 }
 data class RationaleState(
     val title: String,

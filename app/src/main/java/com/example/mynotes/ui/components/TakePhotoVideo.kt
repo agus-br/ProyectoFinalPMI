@@ -1,15 +1,13 @@
-package com.example.mynotes
+package com.example.mynotes.ui.components
 
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,10 +31,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
+import com.example.mynotes.ComposeFileProvider
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
-import kotlinx.coroutines.time.withTimeoutOrNull
 
 @Composable
 fun ImagePicker(
@@ -99,7 +97,9 @@ fun ImagePicker(
                     contentDescription = "Selected image",
                 )
             }
-            if(hasVideo) {VideoPlayer(videoUri = imageUri!!)}
+            if(hasVideo) {
+                VideoPlayer(videoUri = imageUri!!)
+            }
         }
 
         Column(

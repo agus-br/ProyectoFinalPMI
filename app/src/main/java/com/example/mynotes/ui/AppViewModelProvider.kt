@@ -1,20 +1,14 @@
     package com.example.mynotes.ui
 
-    import android.app.Application
     import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
     import androidx.lifecycle.createSavedStateHandle
     import androidx.lifecycle.viewmodel.CreationExtras
     import androidx.lifecycle.viewmodel.initializer
     import androidx.lifecycle.viewmodel.viewModelFactory
     import com.example.mynotes.MyNotesApplication
-    import com.example.mynotes.preferences.ThemePreferences
     import com.example.mynotes.ui.home.HomeViewModel
-    import com.example.mynotes.ui.notes.NoteAddEditViewModel
-    import com.example.mynotes.ui.notes.NoteEntryViewModel
     import com.example.mynotes.ui.notes.NoteTestViewModel
-    import com.example.mynotes.ui.settings.SettingsViewModel
-    import com.example.mynotes.ui.tasks.TaskAddEditViewModel
-    import com.example.mynotes.ui.tasks.TaskEntryViewModel
+    import com.example.mynotes.ui.tasks.AddEditTaskViewModel
     import com.example.mynotes.ui.tasks.TaskItemViewModel
 
     object AppViewModelProvider {
@@ -25,31 +19,10 @@
                     myNotesApplication().container.noteTaskRepository
                 )
             }
-            // Inicializador para AddEditNoteViewModel
-            initializer {
-                NoteAddEditViewModel(
-                    this.createSavedStateHandle(),
-                    myNotesApplication().container.noteTaskRepository
-                )
-            }
-
-            // Inicializador para NoteEntryViewModel
-            initializer {
-                NoteEntryViewModel(
-                    myNotesApplication().container.noteTaskRepository
-                )
-            }
-
-            // Inicializador para NoteEntryViewModel
-            initializer {
-                TaskEntryViewModel(
-                    myNotesApplication().container.noteTaskRepository
-                )
-            }
 
             // Inicializador para AddEditTaskViewModel
             initializer {
-                TaskAddEditViewModel(
+                AddEditTaskViewModel(
                     this.createSavedStateHandle(),
                     myNotesApplication().container.noteTaskRepository
                 )

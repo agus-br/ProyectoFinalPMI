@@ -23,7 +23,7 @@ fun ActionTopNavBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit = {},
     enableActionButtons: Boolean,
-    onSetReminder: () -> Unit,
+    onSetReminder: () -> Unit = {},
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
@@ -68,8 +68,7 @@ fun ActionTopNavBarPreview() {
             title = "Preview",
             canNavigateBack = true,
             navigateUp = {},
-            enableActionButtons = true,
-            onSetReminder = {}
+            enableActionButtons = false
         )
     }
 }
