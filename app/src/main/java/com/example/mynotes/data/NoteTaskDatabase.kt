@@ -7,7 +7,7 @@ import android.content.Context
 
 @Database(
     entities = [NoteTask::class, Reminder::class, MediaFile::class],
-    version = 1,
+    version = 3,
     exportSchema = false)
 abstract class MyNotesDatabase : RoomDatabase() {
     abstract fun noteTaskDao(): NoteTaskDao
@@ -24,6 +24,7 @@ abstract class MyNotesDatabase : RoomDatabase() {
                     context,
                     MyNotesDatabase::class.java, "notetask_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .build().also { Instance = it }
             }
         }

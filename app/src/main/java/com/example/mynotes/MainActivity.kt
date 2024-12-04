@@ -35,7 +35,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
         val uri = ComposeFileProvider.getImageUri(applicationContext)
+        val alarmScheduler : AlarmScheduler = AlarmSchedulerImpl(this)
+
+
         setContent {
 
             val settingsViewModel: SettingsViewModel = viewModel()
@@ -49,11 +54,25 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            MyNotesTheme(darkTheme = isDarkTheme) {
+                //AlarmasScreen(alarmScheduler = AlarmSchedulerImpl(this))
+                val windowSize = calculateWindowSizeClass(this)
+                MyNotesApp(windowSize = windowSize.widthSizeClass)
 
-            InitApp(
-                darkTheme = isDarkTheme,
-                activity = this
-            )
+
+                /*GrabarAudioScreen(
+                    onClickStGra = {
+                        File(cacheDir, "audio.mp3").also {
+                            recorder.start(it)
+                            audioFile = it
+                        }
+
+                    },
+                    onClickSpGra = {recorder.stop()},
+                    onClickStRe = { audioFile?.let { player.start(it) } },
+                    onClickSpRe = {player.stop()}
+                )*/
+            }
         }
     }
 }

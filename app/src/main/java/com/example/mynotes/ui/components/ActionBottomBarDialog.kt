@@ -146,14 +146,14 @@ fun BottomActionBarModal(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = onSelectImage) {
-                    Text("Sleccionar una imágen")
+                    Text("Seleccionar una imágen")
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = onTakeVideo) {
                     Text("Grabar un video")
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = onTakeAudio) {
+                Button(onClick = onTakeAudio ) {
                     Text("Grabar un audio")
                 }
             }
@@ -191,127 +191,5 @@ fun BottomActionBarModal(
                 }
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun IntegratedScreen(
-    modifier: Modifier = Modifier
-) {
-
-    var uri : Uri? = null
-
-    var uris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var hasImage by remember { mutableStateOf(false) }
-    var hasVideo by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
-
-    val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            if (uri != null) {
-                uris = uris + uri // Agrega la nueva imagen a la lista
-            }
-            Log.d("TXT", uri.toString())
-            hasImage = uri != null
-            imageUri = uri
-        }
-    )
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { success ->
-            Log.d("IMG", hasImage.toString())
-            Log.d("URI", imageUri.toString())
-            if(success) imageUri = uri
-            uris = uris + uri!!
-            hasImage = success
-
-        }
-    )
-
-    val videoLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CaptureVideo(),
-        onResult = { success ->
-            hasVideo = success
-        }
-    )
-
-
-    Scaffold(
-        bottomBar = {
-            BottomActionBarModal(
-                content = "Editado ayer",
-                onDeleteClick = {},
-                onTakePhoto = {
-                    uri = ComposeFileProvider.getImageUri(context)
-                    cameraLauncher.launch(uri!!)
-                    imageUri = uri
-                },
-                onSelectImage = { imagePicker.launch("image/*") },
-                onTakeVideo = {
-                    uri = ComposeFileProvider.getImageUri(context)
-                    videoLauncher.launch(uri!!)
-                    imageUri = uri
-                },
-                onTakeAudio = {
-                    // TODO: Implementar la funcionalidad de grabación de audio
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .padding(paddingValues)
-        ) {
-            // Organizar imágenes en un LazyColumn con filas
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(uris.chunked(2)) { rowUris ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        rowUris.forEach { uri ->
-                            AsyncImage(
-                                model = uri,
-                                modifier = Modifier
-                                    .size(200.dp) // Tamaño uniforme de 200x200dp
-                                    .padding(8.dp), // Espaciado entre imágenes
-                                contentDescription = "Selected image",
-                                contentScale = ContentScale.Fit // Ajusta la imágen
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Si se seleccionó un video, mostrar el reproductor
-            if (hasVideo && uris.isNotEmpty()) {
-                VideoPlayer(videoUri = uris.last()) // Muestra el último archivo como video
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun SheetDialogTestPreview() {
-    MyNotesTheme {
-        BottomActionBarModal(
-            onDeleteClick = {},
-            onSelectImage = {},
-            onTakePhoto = {},
-            onTakeAudio = {},
-            onTakeVideo = {},
-            content = "Hello world"
-        )
     }
 }

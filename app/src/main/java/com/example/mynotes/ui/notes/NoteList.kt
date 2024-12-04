@@ -63,6 +63,8 @@ fun NoteListPreview() {
                             "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
                             "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
                             "todo en paz. ",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 ),
                 NoteTask(
@@ -73,12 +75,16 @@ fun NoteListPreview() {
                             "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
                             "mi vida. Seré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
                             "ya no me ",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 ),
                 NoteTask(
                     id = 2,
                     title = "Título de un nota",
                     description = "Hola, esta es una nota qeu siempre he querido escribir pero me danba miedo",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 ),
                 NoteTask(
@@ -88,6 +94,8 @@ fun NoteListPreview() {
                             "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
                             "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
                             "mi vida.",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 ),
                 NoteTask(
@@ -98,6 +106,8 @@ fun NoteListPreview() {
                             "mundo quey comensaré olvidadando todo el dolor que sentí cuando " +
                             "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
                             "todo en paz. ",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 ),
                 NoteTask(
@@ -106,6 +116,8 @@ fun NoteListPreview() {
                     description = "HoSeré mejor y comensaré olvidadando todo el dolor que sentí cuando " +
                             "ya no me parecía que estuvieras atenta. Para mí fue algo muy bonito y dejaré " +
                             "todo en paz. ",
+                    createdDate = System.currentTimeMillis(),
+                    lastEditedDate = System.currentTimeMillis(),
                     type = NoteTaskType.NOTE
                 )
             ),

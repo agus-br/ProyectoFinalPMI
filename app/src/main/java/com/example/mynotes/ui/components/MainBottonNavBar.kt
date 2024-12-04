@@ -57,11 +57,12 @@ fun PruebaBar(
 fun MainBottomNavBar(
     onNotesClick: () -> Unit,
     onTasksClick: () -> Unit,
+    selected: Int
 ) {
     BottomAppBar {
         NavigationBar {
             NavigationBarItem(
-                selected = true,
+                selected = selected == 1,
                 onClick = onNotesClick,
                 icon = {
                     Icon(
@@ -74,7 +75,7 @@ fun MainBottomNavBar(
                 }
             )
             NavigationBarItem(
-                selected = false,
+                selected = selected == 2,
                 onClick = onTasksClick,
                 icon = {
                     Icon(
@@ -98,7 +99,8 @@ fun MainBottomNavBarPreview() {
             bottomBar = {
                 MainBottomNavBar(
                     onNotesClick = {},
-                    onTasksClick = {}
+                    onTasksClick = {},
+                    selected = 1
                 )
             }
         ){

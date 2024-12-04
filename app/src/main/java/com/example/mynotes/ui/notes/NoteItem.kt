@@ -61,6 +61,8 @@ fun NoteItemPreview() {
                         "miedo, aunque ya lo perdí y ahora me siento mucho mejor y quiero decirle al " +
                         "mundo que a partir de hoy le dejas de importar a mi corazon y empiezo a vivir" +
                         "mi vida.",
+                createdDate = System.currentTimeMillis(),
+                lastEditedDate = System.currentTimeMillis(),
                 type = NoteTaskType.NOTE
             )
         )

@@ -35,6 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.example.mynotes.ui.permissions.PermissionRationaleDialog
+import com.example.mynotes.ui.permissions.RationaleState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -61,11 +63,7 @@ fun GrabarAudioScreen(
     var rationaleState by remember {
         mutableStateOf<RationaleState?>(null)
     }
-    /*val fineLocationPermissionState = rememberMultiplePermissionsState(
-        listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-        ),
-    )*/
+
     Box(
         Modifier
             .fillMaxSize()
@@ -109,12 +107,14 @@ fun GrabarAudioScreen(
 }
 
 @Composable
-fun PermissionRequestButton(isGranted: Boolean, title: String,
-                            onClickStGra: () -> Unit,
-                            onClickSpGra: () -> Unit,
-                            onClickStRe: () -> Unit,
-                            onClickSpRe: () -> Unit,
-                            onClick: () -> Unit) {
+fun PermissionRequestButton(
+    isGranted: Boolean, title: String,
+    onClickStGra: () -> Unit,
+    onClickSpGra: () -> Unit,
+    onClickStRe: () -> Unit,
+    onClickSpRe: () -> Unit,
+    onClick: () -> Unit
+) {
     if (isGranted) {
         Row(
             modifier = Modifier
@@ -149,37 +149,6 @@ fun PermissionRequestButton(isGranted: Boolean, title: String,
     }
 }
 
-/**
- * Simple AlertDialog that displays the given rational state
- * Cuadro de dialogo simple que muestra el estado del rational
- */
-@Composable
-fun PermissionRationaleDialog(rationaleState: RationaleState) {
-    AlertDialog(
-        onDismissRequest = { rationaleState.onRationaleReply(false) },
-        title = { Text(text = rationaleState.title) },
-        text = { Text(text = rationaleState.rationale) },
-        confirmButton = {
-            TextButton(
-                onClick = { rationaleState.onRationaleReply(true) }
-            ) {
-                Text("Continue")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { rationaleState.onRationaleReply(false) }
-            ) {
-                Text("Dismiss")
-            }
-        }
-    )
-}
-data class RationaleState(
-    val title: String,
-    val rationale: String,
-    val onRationaleReply: (proceed: Boolean) -> Unit,
-)
 
 interface AudioRecorder {
     fun start(outputFile: File)

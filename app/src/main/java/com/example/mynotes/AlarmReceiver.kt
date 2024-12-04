@@ -1,4 +1,4 @@
-package com.example.mynotes.alarms
+package com.example.mynotes
 
 import android.Manifest
 import android.app.AlarmManager
@@ -30,12 +30,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import com.example.mynotes.R
+import com.example.mynotes.ui.theme.MyNotesTheme
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -52,7 +55,9 @@ fun AlarmasScreen( alarmScheduler: AlarmScheduler){
     var messageText by remember {
         mutableStateOf("")
     }
+
     var alarmItem : AlarmItem? = null
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,29 +86,24 @@ fun AlarmasScreen( alarmScheduler: AlarmScheduler){
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Button(onClick = {
-                /*alarmItem =
+                alarmItem =
                    AlarmItem(
                        alarmTime = LocalDateTime.now().plusSeconds(
                            secondText.toLong()
                        ),
                        message = messageText
-                   )*/
-                alarmItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    AlarmItem(
-                        LocalDateTime.now().plusSeconds(secondText.toLong()),
-                        "El mensaje"
-                    )
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
+                   )
                 alarmItem?.let(alarmScheduler::schedule)
                 secondText = ""
                 messageText = ""
             }) {
                 Text(text = "Schedule")
             }
+
             Spacer(modifier = Modifier.width(8.dp))
+
             Button(onClick = {
                 alarmItem?.let(alarmScheduler::cancel)
             }) {
@@ -144,7 +144,7 @@ interface AlarmScheduler {
 
 class AlarmSchedulerImpl(
     private val context: Context
-) : AlarmScheduler{
+) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     //private val alarmManager = context.getSystemService(AlarmManager::class.java) as AlarmManager
@@ -154,7 +154,9 @@ class AlarmSchedulerImpl(
             putExtra("EXTRA_MESSAGE", alarmItem.message)
         }
 
-        alarmManager.set(
+        val alarmTime = alarmItem.alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L
+
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime()+10000,
             PendingIntent.getBroadcast(
@@ -164,7 +166,7 @@ class AlarmSchedulerImpl(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
-        Log.e("Alarm", "Alarm set at ")
+        Log.e("Alarm", "Alarm set at $alarmTime")
     }
 
     override fun cancel(alarmItem: AlarmItem) {

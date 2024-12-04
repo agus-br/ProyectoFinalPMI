@@ -4,17 +4,14 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.mynotes.ComposeFileProvider
@@ -44,6 +42,12 @@ import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.components.ActionTopNavBar
 import com.example.mynotes.ui.components.BottomActionBarModal
 import com.example.mynotes.ui.navigation.NavigationDestination
+import com.example.mynotes.utils.formatDate
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
 
 object NoteTestDestination : NavigationDestination {
@@ -54,7 +58,7 @@ object NoteTestDestination : NavigationDestination {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun NoteTestScreen(
     navigateBack: () -> Unit,
@@ -72,53 +76,83 @@ fun NoteTestScreen(
     var uris by remember { mutableStateOf<List<Uri>>(emptyList()) }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var hasImage by remember { mutableStateOf(false) }
-    var hasVideo by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+
+
+    val recordAudioPermissionState =
+        rememberPermissionState(permission = android.Manifest.permission.RECORD_AUDIO)
+
+    val cameraPermissionState =
+        rememberPermissionState(permission = android.Manifest.permission.CAMERA)
+
+    val readMediaPermissionState =
+        rememberPermissionState(permission = android.Manifest.permission.READ_EXTERNAL_STORAGE)
+
+    var showRationaleDialog by remember { mutableStateOf(false) }
+    var enableRationalDialogAudio by remember { mutableStateOf(false) }
+    var enableRationalDialogReadExternal by remember { mutableStateOf(false) }
+    var enableRationalDialogCamera by remember { mutableStateOf(false) }
+    var permissionToRequest by remember { mutableStateOf<PermissionState?>(null) }
 
 
     LaunchedEffect(note.id) {
         viewModel.loadMediaFiles(note.id) // Cargar MediaFiles al iniciar
         // Convertir MediaFiles a URIs y actualizar la lista 'uris'
         viewModel.mediaFiles.collect { mediaFiles ->
-            uris = mediaFiles.map { Uri.parse(it.filePath) }
+            if (mediaFiles.isEmpty()) {
+                Log.d("NoteTestScreen", "La lista de MediaFiles está vacía para la nota ${note.id}")
+            } else {
+                Log.d("NoteTestScreen", "MediaFiles para la nota ${note.id}:")
+                mediaFiles.forEach { mediaFile ->
+                    Log.d("NoteTestScreen", "  - filePath: ${mediaFile.filePath}")
+                }
+            }
+            uris = mediaFiles.map {
+                Uri.parse(it.filePath)
+            }
         }
     }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            Log.d("TXT", uri.toString())
-            hasImage = uri != null
-            imageUri = uri
 
             if (uri != null) {
                 uris = uris + uri // Agrega la nueva imagen a la lista cuando no es nula la uri, osea si seleccionó una pues
                 val mediaFile = MediaFile(
                     noteTaskId = 0,
-                    filePath = imageUri.toString(),
+                    filePath = uri.toString(),
                     mediaType = MediaType.IMAGE
-                ) // noteTaskId = 0 temporalmente
+                )
                 mediaFiles.add(mediaFile)
+
+                Log.d("TXT", uri.toString())
+                Log.d("Path", mediaFile.filePath)
+
             }
+
         }
+
     )
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
-            Log.d("IMG", hasImage.toString())
-            Log.d("URI", imageUri.toString())
-            if (success && uri != null) {
+
+            if (success) {
+                uris = uris + uri!!
                 val mediaFile = MediaFile(
                     noteTaskId = 0,
-                    filePath = imageUri.toString(),
+                    filePath = uri!!.toString(),
                     mediaType = MediaType.IMAGE
-                ) // noteTaskId = 0 temporalmente
+                )
                 mediaFiles.add(mediaFile)
+
+
+                Log.d("TXT", uri.toString())
+                Log.d("Path", mediaFile.filePath)
             }
-            hasImage = success
 
         }
     )
@@ -126,19 +160,44 @@ fun NoteTestScreen(
     val videoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CaptureVideo(),
         onResult = { success ->
-            if (success && uri != null) {
+
+            if (success) {
                 uris = uris + uri!!
                 val mediaFile = MediaFile(
                     noteTaskId = 0,
                     filePath = uri!!.toString(),
-                    mediaType = MediaType.IMAGE
-                ) // noteTaskId = 0 temporalmente
+                    mediaType = MediaType.VIDEO
+                )
                 mediaFiles.add(mediaFile)
+
+                Log.d("TXT", uri.toString())
+                Log.d("Path", mediaFile.filePath)
+
             }
-            hasVideo = success
+
         }
     )
 
+    if (showRationaleDialog) {
+        AlertDialog(
+            onDismissRequest = { showRationaleDialog = false },
+            title = { Text(text = "Permiso requerido") },
+            text = { Text(text = "Para acceder a esta función debes otorgar los permisos necesarios.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    permissionToRequest?.launchPermissionRequest()
+                    showRationaleDialog = false
+                }) {
+                    Text("Otorgar permiso")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRationaleDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -151,24 +210,68 @@ fun NoteTestScreen(
         },
         bottomBar = {
             BottomActionBarModal(
-                content = "Editado ayer",
+                content = "Editado: ${formatDate(note.lastEditedDate)}",
                 onDeleteClick = {
                     viewModel.deleteNoteTask()
                     navigateBack()
                 },
                 onTakePhoto = {
-                    uri = ComposeFileProvider.getImageUri(context)
-                    cameraLauncher.launch(uri!!)
-                    imageUri = uri
+
+                    if (cameraPermissionState.status.shouldShowRationale && !enableRationalDialogCamera) {
+                        cameraPermissionState.launchPermissionRequest()
+                        enableRationalDialogCamera = true
+                    } else if (cameraPermissionState.status.shouldShowRationale && enableRationalDialogCamera) {
+                        showRationaleDialog = true
+                        permissionToRequest = cameraPermissionState
+                    }else if(cameraPermissionState.status.isGranted){
+                        // El permiso ya está otorgado
+                        uri = ComposeFileProvider.getImageUri(context)
+                        cameraLauncher.launch(uri!!)
+                        showRationaleDialog = false
+                    }
+
                 },
-                onSelectImage = { imagePicker.launch("image/*") },
+                onSelectImage = {
+
+                    if (readMediaPermissionState.status.shouldShowRationale && !enableRationalDialogReadExternal) {
+                        readMediaPermissionState.launchPermissionRequest()
+                        enableRationalDialogReadExternal = true
+                    } else if (readMediaPermissionState.status.shouldShowRationale && enableRationalDialogReadExternal) {
+                        showRationaleDialog = true
+                        permissionToRequest = readMediaPermissionState
+                    }else if(readMediaPermissionState.status.isGranted){
+                        imagePicker.launch("image/*")
+                        showRationaleDialog = false
+                    }
+
+                },
                 onTakeVideo = {
-                    uri = ComposeFileProvider.getImageUri(context)
-                    videoLauncher.launch(uri!!)
-                    imageUri = uri
+
+                    if (cameraPermissionState.status.shouldShowRationale && !enableRationalDialogCamera) {
+                        cameraPermissionState.launchPermissionRequest()
+                        enableRationalDialogCamera = true
+                    } else if (cameraPermissionState.status.shouldShowRationale && enableRationalDialogCamera) {
+                        showRationaleDialog = true
+                        permissionToRequest = cameraPermissionState
+                    }else if(cameraPermissionState.status.isGranted){
+                        uri = ComposeFileProvider.getImageUri(context)
+                        videoLauncher.launch(uri!!)
+                        showRationaleDialog = false
+                    }
+
                 },
                 onTakeAudio = {
-                    // TODO: Implementar la funcionalidad de grabación de audio
+
+                    if (recordAudioPermissionState.status.shouldShowRationale && !enableRationalDialogAudio) {
+                        recordAudioPermissionState.launchPermissionRequest()
+                        enableRationalDialogAudio = true
+                    } else if (recordAudioPermissionState.status.shouldShowRationale && enableRationalDialogAudio) {
+                        showRationaleDialog = true
+                        permissionToRequest = recordAudioPermissionState
+                    }else if(recordAudioPermissionState.status.isGranted){
+                        showRationaleDialog = false
+                    }
+
                 }
             )
         },
@@ -222,47 +325,74 @@ fun NoteTestScreen(
             }
 
             if (uris.isNotEmpty()) {
-                val chunkSize = if (uris.size <= 3) uris.size else 5 // Calcula el tamaño del chunk
-                items(uris.chunked(chunkSize)) { rowUris ->
-                    Row(
+                /*val imageUris = uris.filter { mediaFile ->
+                    mediaFiles.any { it.filePath == mediaFile.toString() && it.mediaType == MediaType.IMAGE }
+                }*/
+                item {
+                    LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(4.dp), // Aplica padding al row, aunque yo ni lo noto
-                        horizontalArrangement = Arrangement.SpaceAround // Es un espaciado uniforme, tanto en medio de lso elementos como al inicio y al final
+                            .padding(4.dp)
                     ) {
-                        rowUris.forEach { uri ->
-                            Box(
+                        items(uris) { uri ->
+                            AsyncImage(
+                                model = uri,
                                 modifier = Modifier
-                                    .weight(1f) // Asigna peso igual a cada imagen
-                                    .aspectRatio(1f) // Mantiene una relación de aspecto 1:1
-                                    .padding(4.dp) // Para que no se vean todas pegadas
-                            ) {
-                                AsyncImage(
-                                    model = uri,
-                                    modifier = Modifier.fillMaxSize(), // toma el tamaño del box
-                                    contentDescription = "Selected image",
-                                    contentScale = ContentScale.Fit
-                                )
-                            }
+                                    .size(150.dp)
+                                    .padding(4.dp),
+                                contentDescription = "Selected image",
+                                contentScale = ContentScale.Fit
+                            )
                         }
                     }
                 }
             }
 
-            // TODO: Implementar la misma lógica de las imágenes para los videos, aunque puede cambiar para que sea algo más parecido a un reproductor con barra de progreso
-            if (hasVideo && uris.isNotEmpty()) {
-                item {
+            item {
+                val videoUris = uris.filter { mediaFile ->
+                    mediaFiles.any { it.filePath == mediaFile.toString() && it.mediaType == MediaType.VIDEO }
+                }
+
+                if (videoUris.isNotEmpty()) {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    ) {
+                        items(videoUris) { videoUri ->
+                            // Mostrar la vista previa del video con VideoPlayer
+                            VideoPlayer(
+                                videoUri = videoUri,
+                                modifier = Modifier
+                                    .size(150.dp) // Ajusta el tamaño según tu diseño
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            /*
+            item {
+                // TODO: Implementar la misma lógica de las imágenes para los videos, aunque puede cambiar para que sea algo más parecido a un reproductor con barra de progreso
+                if (hasVideo && uris.isNotEmpty()) {
                     VideoPlayer(videoUri = uris.last())
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-            }
+            }*/
 
             item {
                 // Botón para guardar
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            // Guarda la nota papu
+                            // Ajustes de las fechas de edición y creación
+                            if(note.id == 0){
+                                note.createdDate = System.currentTimeMillis()
+                                note.lastEditedDate = System.currentTimeMillis()
+                            }else{
+                                note.lastEditedDate = System.currentTimeMillis()
+                            }
                             val noteId = viewModel.saveNoteTask()
 
                             if(noteId > 0){
@@ -281,6 +411,7 @@ fun NoteTestScreen(
                     Text(stringResource(R.string.save))
                 }
             }
+
         }
     }
 }

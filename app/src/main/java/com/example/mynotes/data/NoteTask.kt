@@ -10,6 +10,8 @@ data class NoteTask(
     var title: String,
     var description: String,
     val type: NoteTaskType,
+    var createdDate: Long,
+    var lastEditedDate: Long,
     val dueDate: Long? = null, // Solo para tareas
     var isCompleted: Boolean = false, // Solo para tareas
 ) {

@@ -62,7 +62,7 @@ fun HomeScreen(
                     scrollBehavior = scrollBehavior
                 )
                 SearchBar(
-                    placeHolder = "Buscar mis notas",
+                    placeHolder = if (currentListShowing == 1) "Buscar mis notas" else "Buscar mis tareas",
                     onSearch = {},
                     modifier = Modifier
                         .fillMaxWidth()
@@ -87,7 +87,8 @@ fun HomeScreen(
         bottomBar = {
             MainBottomNavBar(
                 onNotesClick = {currentListShowing = 1},
-                onTasksClick = {currentListShowing = 2}
+                onTasksClick = {currentListShowing = 2},
+                selected = currentListShowing
             )
         }
     ) { innerPadding ->

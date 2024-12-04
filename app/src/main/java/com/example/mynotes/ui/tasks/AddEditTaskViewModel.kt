@@ -11,6 +11,7 @@ import com.example.mynotes.data.MediaType
 import com.example.mynotes.data.NoteTask
 import com.example.mynotes.data.NoteTaskRepository
 import com.example.mynotes.data.NoteTaskType
+import com.example.mynotes.data.Reminder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -28,6 +29,8 @@ class AddEditTaskViewModel(
             id = 0,
             title = "",
             description = "",
+            createdDate = System.currentTimeMillis(),
+            lastEditedDate = System.currentTimeMillis(),
             type = NoteTaskType.TASK
         )
     )
@@ -122,5 +125,54 @@ class AddEditTaskViewModel(
             loadMediaFiles(task.id) // Recargar la lista
         }
     }
+
+
+    // MÉTODOS PARA EL MANEJO DE RECORDATORIOS
+
+    // Flujo para observar los recordatorios asociados a la tarea
+    private val _reminders = MutableStateFlow<List<Reminder>>(emptyList())
+    val reminders: StateFlow<List<Reminder>> = _reminders
+
+    /**
+     * Cargar recordatorios asociados a una tarea.
+     */
+    fun loadReminders(noteTaskId: Int) {
+        viewModelScope.launch {
+            repository.getRemindersByNoteTaskIdStream(noteTaskId).collect { loadedReminders ->
+                _reminders.value = loadedReminders
+            }
+        }
+    }
+
+    /**
+     * Agregar un nuevo recordatorio.
+     */
+    fun addReminder(reminder: Reminder) {
+        viewModelScope.launch {
+            repository.insertReminder(reminder)
+            loadReminders(reminder.noteTaskId) // Recargar los recordatorios después de insertar
+        }
+    }
+
+    /**
+     * Actualizar un recordatorio existente.
+     */
+    fun updateReminder(reminder: Reminder) {
+        viewModelScope.launch {
+            repository.updateReminder(reminder)
+            loadReminders(reminder.noteTaskId) // Recargar los recordatorios después de actualizar
+        }
+    }
+
+    /**
+     * Eliminar un recordatorio.
+     */
+    fun removeReminder(reminder: Reminder) {
+        viewModelScope.launch {
+            repository.deleteReminder(reminder)
+            loadReminders(reminder.noteTaskId) // Recargar los recordatorios después de eliminar
+        }
+    }
+
 
 }

@@ -28,6 +28,8 @@ class NoteTestViewModel(
             id = 0,
             title = "",
             description = "",
+            createdDate = System.currentTimeMillis(),
+            lastEditedDate = System.currentTimeMillis(),
             type = NoteTaskType.NOTE
         )
     )
