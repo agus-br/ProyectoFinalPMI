@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.content.Context
 import com.example.mynotes.data.AppContainer
 import com.example.mynotes.data.AppDataContainer
+import com.example.mynotes.notificationSystem.NotificationChannelManager
+import com.example.mynotes.utils.Constants
 
 class MyNotesApplication : Application() {
 
@@ -24,17 +26,7 @@ class MyNotesApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val channelId = "alarm_id"
-        val channelName = "alarm_name"
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        notificationManager.createNotificationChannel(channel)
-
+        NotificationChannelManager.createNotificationChannels(this)
 
         instance = this // Asigna la instancia en onCreate
         container = AppDataContainer(this)

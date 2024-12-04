@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.mynotes.notificationSystem.NotificationTestScreenContent
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
 
         val uri = ComposeFileProvider.getImageUri(applicationContext)
-        val alarmScheduler : AlarmScheduler = AlarmSchedulerImpl(this)
+        //val alarmScheduler : AlarmScheduler = AlarmSchedulerImpl(this)
 
 
         setContent {
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
             var isDarkTheme by remember { mutableStateOf(settingsViewModel.isDarkTheme.value) }
 
             // Observa los cambios en settingsViewModel.isDarkTheme
-            LaunchedEffect(settingsViewModel) {
+            LaunchedEffect(settingsViewModel.isDarkTheme) {
                 launch {
                     settingsViewModel.isDarkTheme.collect { newTheme ->
                         isDarkTheme = newTheme
@@ -55,9 +56,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
             MyNotesTheme(darkTheme = isDarkTheme) {
-                //AlarmasScreen(alarmScheduler = AlarmSchedulerImpl(this))
-                val windowSize = calculateWindowSizeClass(this)
-                MyNotesApp(windowSize = windowSize.widthSizeClass)
+
+                NotificationTestScreenContent()
+
+                //val windowSize = calculateWindowSizeClass(this)
+                //MyNotesApp(windowSize = windowSize.widthSizeClass)
 
 
                 /*GrabarAudioScreen(
@@ -77,14 +80,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Composable
-fun InitApp(
-    darkTheme: Boolean,
-    activity: MainActivity
-){
-    MyNotesTheme(darkTheme = darkTheme) {
-        val windowSize = calculateWindowSizeClass(activity)
-        MyNotesApp(windowSize = windowSize.widthSizeClass)
-    }
-}
