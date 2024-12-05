@@ -50,6 +50,7 @@ import com.example.mynotes.data.Reminder
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.components.ActionTopNavBar
 import com.example.mynotes.ui.components.BottomActionBarModal
+import com.example.mynotes.ui.multimedia.ExoPlayerVideo
 import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.ui.reminders.ReminderItem
 import com.example.mynotes.ui.reminders.ReminderList
@@ -521,11 +522,9 @@ fun AddEditTaskScreen(
                     ) {
                         items(videoUris) { videoUri ->
                             // Mostrar la vista previa del video con VideoPlayer
-                            VideoPlayer(
-                                videoUri = videoUri,
-                                modifier = Modifier
-                                    .size(150.dp) // Ajusta el tamaño según tu diseño
-                                    .padding(4.dp)
+                            ExoPlayerVideo(
+                                context = context,
+                                uri = videoUri
                             )
                         }
                     }
