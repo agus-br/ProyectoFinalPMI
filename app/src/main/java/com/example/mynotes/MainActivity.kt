@@ -57,10 +57,10 @@ class MainActivity : ComponentActivity() {
             }
             MyNotesTheme(darkTheme = isDarkTheme) {
 
-                NotificationTestScreenContent()
+                //NotificationTestScreenContent()
 
-                //val windowSize = calculateWindowSizeClass(this)
-                //MyNotesApp(windowSize = windowSize.widthSizeClass)
+                val windowSize = calculateWindowSizeClass(this)
+                MyNotesApp(windowSize = windowSize.widthSizeClass)
 
 
                 /*GrabarAudioScreen(
