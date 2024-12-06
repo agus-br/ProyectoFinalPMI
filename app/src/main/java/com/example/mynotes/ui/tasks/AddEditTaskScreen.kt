@@ -1,9 +1,13 @@
 package com.example.mynotes.ui.tasks
 
+import android.app.TimePickerDialog
+import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,9 +68,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 object AddEditTaskDestination : NavigationDestination {
     override val route = "add_edit_task"
@@ -75,6 +84,7 @@ object AddEditTaskDestination : NavigationDestination {
     val routeWithArgs = "$route?$taskIdArg={$taskIdArg}" // Argumento opcional
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddEditTaskScreen(
@@ -125,25 +135,12 @@ fun AddEditTaskScreen(
     var permissionToRequest by remember { mutableStateOf<PermissionState?>(null) }
 
 
-    var showDatePickerDialog by remember { mutableStateOf(false) }
-    var showTimePickerDialog by remember { mutableStateOf(false) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-    val initialDateTime = task.dueDate?.let {
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-    }
-
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialDateTime?.toLocalDate()?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
-    )
-
-    val timePickerState = rememberTimePickerState(
-        initialHour = initialDateTime?.hour ?: 0,
-        initialMinute = initialDateTime?.minute ?: 0,
-        is24Hour = true
-    )
-
-    //val datePickerState = rememberDatePickerState()
-    //val timePickerState = rememberTimePickerState(initialHour = 0, initialMinute = 0, is24Hour = true)
+    // Formateadores para mostrar la fecha y hora
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
 
     LaunchedEffect(task.id) {
         viewModel.loadMediaFiles(task.id) // Cargar MediaFiles al iniciar
@@ -227,53 +224,6 @@ fun AddEditTaskScreen(
         }
     )
 
-    if(showDatePickerDialog){
-        DatePickerDialog(
-            onDismissRequest = { showDatePickerDialog = false },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showDatePickerDialog = false
-                    }
-                ) {
-                    Text(text = "OK")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = {
-                        showDatePickerDialog = false
-                    }
-                ) {
-                    Text(text = "Cerrar")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    }
-
-    if (showTimePickerDialog) {
-        Dialog(
-            onDismissRequest = { showTimePickerDialog = false }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                TimePicker(
-                    state = timePickerState
-                )
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ){
-                    Button( onClick = { showTimePickerDialog = false } ) { Text("Aceptar") }
-                }
-            }
-
-        }
-    }
 
     if (showRationaleDialog) {
         AlertDialog(
@@ -313,22 +263,26 @@ fun AddEditTaskScreen(
                         permissionToRequest = notificationPermissionState
                     }else if(notificationPermissionState.status.isGranted){
 
-                        showDatePickerDialog = true
-                        showTimePickerDialog = true
+                        showTimePicker(context) { time ->
+                            selectedTime = time
+                        }
 
-                        // Obtener la fecha en milisegundos
-                        val dateInMillis = datePickerState.selectedDateMillis ?: 0L
+                        showDatePicker(context) { date ->
+                            selectedDate = date
+                        }
 
-                        // Obtener la hora en milisegundos
-                        val hour = timePickerState.hour
-                        val minute = timePickerState.minute
-                        val timeInMillis = (hour * 60 + minute) * 60 * 1000L
+                        val dateTime = LocalDateTime.of(selectedDate, selectedTime)
+
+                        val timeInMillis = dateTime
+                            .atZone(ZoneId.systemDefault())
+                            .toInstant()
+                            .toEpochMilli()
 
                         val newReminder = Reminder(
                             noteTaskId = task.id,
                             isActive = true,
-                            dateInMillis = dateInMillis, // Agregar la fecha al recordatorio
-                            timeInMillis = timeInMillis // Agregar la hora al recordatorio
+                            dateInMillis = timeInMillis, // Agregar la fecha al recordatorio
+                            timeInMillis = timeInMillis// Agregar la hora al recordatorio
                         )
                         reminders = reminders + newReminder
 
@@ -433,32 +387,6 @@ fun AddEditTaskScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            item {
-                val localDateTime = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(task.dueDate ?: 0L),
-                    ZoneId.systemDefault()
-                )
-
-                val dueDateInMillis = localDateTime.toLocalDate().atStartOfDay().toInstant(
-                    ZoneOffset.UTC).toEpochMilli()
-                val dueTimeInMillis = localDateTime.toLocalTime().toSecondOfDay() * 1000L
-
-                DueDateItem(
-                    dueDateInMillis = dueDateInMillis,
-                    dueTimeInMillis = dueTimeInMillis,
-                    onDateClick = {
-                        showDatePickerDialog = true
-                    },
-                    onTimeClick = {
-                        showTimePickerDialog = true
-                    },
-                    setDueDate = {
-                        showDatePickerDialog = true
-                        showTimePickerDialog = true
-                    }
-                )
-            }
-
             item{
                 // Campo de descripción
                 OutlinedTextField(
@@ -539,6 +467,25 @@ fun AddEditTaskScreen(
             }*/
 
 
+            item {
+                if(reminders.isNotEmpty()){
+                    DueDateItem(
+                        date = selectedDate.format(dateFormatter),
+                        time = selectedTime.format(timeFormatter),
+                        onDateClick = {
+                            showTimePicker(context) { time ->
+                                selectedTime = time
+                            }
+                        },
+                        onTimeClick = {
+                            showDatePicker(context) { date ->
+                                selectedDate = date
+                            }
+                        }
+                    )
+                }
+            }
+
             item{
                 // Botón para guardar
                 Button(
@@ -589,14 +536,12 @@ fun AddEditTaskScreen(
 
 @Composable
 fun DueDateItem(
-    dueDateInMillis: Long?,
-    dueTimeInMillis: Long? = null, // Hora de vencimiento en milisegundos (opcional)
+    date: String,
+    time: String? = "00:00", // Hora de vencimiento en milisegundos (opcional)
     onDateClick: () -> Unit,
     onTimeClick: () -> Unit, // Función a ejecutar al hacer clic en la hora
-    setDueDate: () -> Unit, // Función para agregar fecha límite
     modifier: Modifier = Modifier
 ) {
-    val timeInMillis = dueTimeInMillis ?: 0L // Si no se especifica la hora, usar 0 (medianoche)
 
     Card(
         modifier = modifier
@@ -614,33 +559,62 @@ fun DueDateItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Fecha de vencimiento",
+                    text = "Recordatorio",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
-                // Mostrar la fecha y la hora
-                if (dueDateInMillis != null) {
-                        TextButton(onClick = onDateClick) {
-                            Text(
-                                text = SimpleFormatDate(dueDateInMillis),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        TextButton(onClick = onTimeClick) {
-                            Text(
-                                text = formatTime(timeInMillis),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                } else {
-                        TextButton(onClick = setDueDate) {
-                            Text(
-                                text = "¿Fecha límite?",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                TextButton(onClick = onDateClick) {
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
+
+                TextButton(onClick = onTimeClick) {
+                    Text(
+                        text = time ?: "00:00",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
             }
         }
     }
+}
+
+
+fun showTimePicker(
+    context: Context,
+    onTimeSet: (LocalTime) -> Unit
+) {
+    val calendar = Calendar.getInstance()
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+    val minute = calendar.get(Calendar.MINUTE)
+
+    TimePickerDialog(
+        context,
+        { _, hourOfDay, minuteOfHour ->
+            onTimeSet(LocalTime.of(hourOfDay, minuteOfHour))
+        },
+        hour,
+        minute,
+        true
+    ).show()
+}
+
+fun showDatePicker(context: Context, onDateSet: (LocalDate) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    android.app.DatePickerDialog(
+        context,
+        { _, year, monthOfYear, dayOfMonth ->
+            onDateSet(LocalDate.of(year, monthOfYear + 1, dayOfMonth))
+        },
+        year,
+        month,
+        day
+    ).show()
 }

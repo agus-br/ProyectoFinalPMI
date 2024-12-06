@@ -4,15 +4,19 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -335,14 +339,44 @@ fun NoteTestScreen(
                             .padding(4.dp)
                     ) {
                         items(uris) { uri ->
-                            AsyncImage(
-                                model = uri,
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .padding(4.dp),
-                                contentDescription = "Selected image",
-                                contentScale = ContentScale.Fit
-                            )
+                            Box{
+                                AsyncImage(
+                                    model = uri,
+                                    modifier = Modifier
+                                        .size(150.dp)
+                                        .padding(4.dp),
+                                    contentDescription = "Selected image",
+                                    contentScale = ContentScale.Fit
+                                )
+                                IconButton(
+                                    onClick = {
+                                        /*coroutineScope.launch {
+                                            // Buscar el MediaFile asociado al URI
+                                            val mediaFileToDelete = mediaFiles.find { it.filePath == uri.toString() }
+                                            if (mediaFileToDelete != null) {
+                                                // Eliminar de la base de datos
+                                                viewModel.removeMediaFile(mediaFileToDelete)
+                                                // Eliminar de las listas locales
+                                                mediaFiles = mediaFiles.filter { it.id != mediaFileToDelete.id }.toMutableList()
+                                                uris = uris.filter { it != uri }
+                                            }
+                                        }*/
+                                        val mediaFileToRemove = viewModel.mediaFiles.value.find { it.filePath == uri.toString() }
+                                        if (mediaFileToRemove != null) {
+                                            viewModel.removeMediaFile(mediaFileToRemove) // Eliminar de la base de datos
+                                        }
+                                        // Actualizar el estado local
+                                        uris = uris.filter { it != uri }
+
+                                    },
+                                    modifier = Modifier.offset(x = 100.dp, y = (-10).dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = "Delete Image"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
