@@ -162,14 +162,15 @@ class AndroidAudioRecorder(
 
     private var recorder: MediaRecorder? = null
 
-
     private fun createRecorder(): MediaRecorder {
         return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(context)
         } else MediaRecorder()
     }
 
-    override fun start(outputFile: File) {
+    override fun start(
+        outputFile: File
+    ) {
         createRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -195,7 +196,6 @@ class AndroidAudioPlayer(
 ): AudioRecorder {
 
     private var player: MediaPlayer? = null
-
 
     override fun start(outputFile: File) {
         MediaPlayer.create(context, outputFile.toUri()).apply {

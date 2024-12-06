@@ -16,65 +16,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
 
 @Composable
 fun ExoPlayerVideo(
-    context: Context,
     uri: Uri
 ) {
+    val context = LocalContext.current
     val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
+        SimpleExoPlayer.Builder(context).build().apply {
             setMediaItem(MediaItem.fromUri(uri))
             prepare()
         }
     }
 
-    val playbackState = exoPlayer.playbackState
-
-    // Limpia el recurso al salir de la pantalla
-    DisposableEffect(key1 = exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    // Vista de video usando PlayerView
     AndroidView(
-        factory = { ctx ->
-            PlayerView(ctx).apply {
+        factory = { context ->
+            PlayerView(context).apply {
                 player = exoPlayer
             }
         },
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(8.dp)
     )
 
-    // Controles de reproducción
-    val isPlaying = exoPlayer.isPlaying
 
-    IconButton(
-        onClick = {
-            if (isPlaying) {
-                exoPlayer.pause()
-            } else {
-                exoPlayer.play()
-            }
-        },
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
-        Icon(
-            imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-            contentDescription = if (isPlaying) "Pause" else "Play",
-            modifier = Modifier.size(24.dp)
-        )
+    // Limpia el recurso al salir de la pantalla
+    DisposableEffect(key1 = exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
     }
 }

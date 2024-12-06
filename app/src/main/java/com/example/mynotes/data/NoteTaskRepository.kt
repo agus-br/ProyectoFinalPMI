@@ -66,7 +66,7 @@ interface NoteTaskRepository {
     /**
      * Insert a new media file.
      */
-    suspend fun insertMediaFile(mediaFile: MediaFile)
+    suspend fun insertMediaFile(mediaFile: MediaFile): Int
 
     /**
      * Delete a specific media file.

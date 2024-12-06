@@ -13,7 +13,7 @@ interface MediaFileDao {
     fun getMediaFilesByNoteTaskId(noteTaskId: Int): Flow<List<MediaFile>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(mediaFile: MediaFile)
+    suspend fun insert(mediaFile: MediaFile): Long
 
     @Delete
     suspend fun delete(mediaFile: MediaFile)

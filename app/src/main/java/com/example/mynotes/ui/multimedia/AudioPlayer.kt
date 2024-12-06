@@ -15,13 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun AudioPlayer(
-    uri: Uri,
-    context: Context
+    uri: Uri
 ) {
+    val context = LocalContext.current
     var isPlaying by remember { mutableStateOf(false) }
     val mediaPlayer = remember(uri) { MediaPlayer.create(context, uri) }
 
