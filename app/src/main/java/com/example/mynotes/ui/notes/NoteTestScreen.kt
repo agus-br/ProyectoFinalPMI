@@ -117,22 +117,25 @@ fun NoteTestScreen(
     var permissionToRequest by remember { mutableStateOf<PermissionState?>(null) }
 
 
-    val recorder by lazy {
+    /*val recorder by lazy {
         AndroidAudioRecorder(context)
-    }
+    }*/
 
-    var audioFile: File? = null
+    //var audioFile: File? = null
     var isRecording by remember { mutableStateOf(false) }
-    /*var mediaRecorder: MediaRecorder? = null
+    var mediaRecorder: MediaRecorder? = null
     var audioFile: File? by remember { mutableStateOf(null) }
 
-    fun startRecording(context: Context) {
+    fun startRecording(
+        context: Context
+    ) {
 
-        uri = ComposeFileProvider.getAudioUri(context)
-        audioFile = File(uri!!.path!!)
+
+        //audioFile = File(uri!!.path!!)
 
         mediaRecorder = MediaRecorder().apply {
             try {
+                audioFile = File(context.cacheDir, "audios/miaudio.m4a")
                 setAudioSource(MediaRecorder.AudioSource.MIC)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
@@ -165,6 +168,7 @@ fun NoteTestScreen(
 
         // Agregar el archivo de audio grabado a la lista de seleccionados
         audioFile?.let { file ->
+            uri = FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
             try {
                 if (context.contentResolver.getType(uri!!)?.startsWith("video/") == true) {
                     val correctedUri = Uri.fromFile(file)
@@ -184,7 +188,7 @@ fun NoteTestScreen(
                 Log.e("URI Error", "Error processing the URI for audio file", e)
             }
         }
-    }*/
+    }
 
 
 
@@ -362,16 +366,16 @@ fun NoteTestScreen(
                     }else if(recordAudioPermissionState.status.isGranted){
                         uri = ComposeFileProvider.getAudioUri(context)
                         if (!isRecording) {
-                            //startRecording(context)
-                            File(uri!!.toString()).also {
+                            startRecording(context)
+                            /*File(uri!!.toString()).also {
                                 recorder.start(it)
                                 audioFile = it
                                 isRecording = true
-                            }
+                            }*/
                         } else {
-                            recorder.stop()
+                            //recorder.stop()
+                            stopRecording()
                             isRecording = false
-                            //stopRecording()
                         }
                         showRationaleDialog = false
                     }
@@ -383,13 +387,13 @@ fun NoteTestScreen(
             if (isRecording) {
                 FloatingActionButton(
                     onClick = {
-                        recorder.stop()
+                        stopRecording()
                         isRecording = false
-                        viewModel.addMediaFile(
+                        /*viewModel.addMediaFile(
                             filePath = uri.toString(),
                             mediaType = MediaType.AUDIO
-                        )
-                        Log.d("Last audio recorder", uri.toString())
+                        )*/
+                        //Log.d("Last audio recorder", uri.toString())
                     },
                     shape = CircleShape,
                     containerColor = Color.Red,

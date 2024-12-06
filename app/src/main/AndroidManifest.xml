@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <provider
-            android:name=".ComposeFileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.mynotes.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
