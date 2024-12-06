@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <files-path
-        name="my_images"
-        path="images/" />
     <cache-path
-        name="my_images"
-        path="images/" />
-
-
+        name="my_images_cache"
+        path="images" />
+    <cache-path
+        name="my_videos_cache"
+        path="videos" />
+    <cache-path
+        name="my_audios_cache"
+        path="audios" />
 </paths>

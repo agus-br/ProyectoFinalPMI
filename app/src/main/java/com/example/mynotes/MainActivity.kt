@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     },
                     onClickSpGra = {recorder.stop()},
                     onClickStRe = { audioFile?.let { player.start(it) } },
-                    onClickSpRe = {player.stop()}
+                    onClickSpRe = { player.stop() }
                 )*/
             }
         }

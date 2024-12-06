@@ -1,9 +1,18 @@
 package com.example.mynotes.ui.notes
 
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.media.MediaRecorder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,11 +24,15 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,12 +43,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.mynotes.AndroidAudioRecorder
 import com.example.mynotes.ComposeFileProvider
 import com.example.mynotes.R
 import com.example.mynotes.ui.components.VideoPlayer
@@ -45,6 +61,7 @@ import com.example.mynotes.data.NoteTask
 import com.example.mynotes.ui.AppViewModelProvider
 import com.example.mynotes.ui.components.ActionTopNavBar
 import com.example.mynotes.ui.components.BottomActionBarModal
+import com.example.mynotes.ui.multimedia.MediaItemDisplay
 import com.example.mynotes.ui.navigation.NavigationDestination
 import com.example.mynotes.utils.formatDate
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -53,6 +70,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
+import java.io.File
 
 object NoteTestDestination : NavigationDestination {
     override val route = "note_edit_test"
@@ -62,6 +80,7 @@ object NoteTestDestination : NavigationDestination {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun NoteTestScreen(
@@ -71,15 +90,12 @@ fun NoteTestScreen(
     viewModel: NoteTestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
+
     val note: NoteTask = viewModel.noteTask
 
-    var mediaFiles by remember { mutableStateOf<MutableList<MediaFile>>(mutableListOf()) }
+    val mediaFiles by viewModel.mediaFiles.collectAsState(initial = emptyList())
 
     var uri : Uri? = null
-
-    var uris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     val context = LocalContext.current
 
@@ -93,6 +109,7 @@ fun NoteTestScreen(
     val readMediaPermissionState =
         rememberPermissionState(permission = android.Manifest.permission.READ_EXTERNAL_STORAGE)
 
+
     var showRationaleDialog by remember { mutableStateOf(false) }
     var enableRationalDialogAudio by remember { mutableStateOf(false) }
     var enableRationalDialogReadExternal by remember { mutableStateOf(false) }
@@ -100,85 +117,151 @@ fun NoteTestScreen(
     var permissionToRequest by remember { mutableStateOf<PermissionState?>(null) }
 
 
-    LaunchedEffect(note.id) {
-        viewModel.loadMediaFiles(note.id) // Cargar MediaFiles al iniciar
-        // Convertir MediaFiles a URIs y actualizar la lista 'uris'
-        viewModel.mediaFiles.collect { mediaFiles ->
-            if (mediaFiles.isEmpty()) {
-                Log.d("NoteTestScreen", "La lista de MediaFiles está vacía para la nota ${note.id}")
-            } else {
-                Log.d("NoteTestScreen", "MediaFiles para la nota ${note.id}:")
-                mediaFiles.forEach { mediaFile ->
-                    Log.d("NoteTestScreen", "  - filePath: ${mediaFile.filePath}")
-                }
-            }
-            uris = mediaFiles.map {
-                Uri.parse(it.filePath)
+    val recorder by lazy {
+        AndroidAudioRecorder(context)
+    }
+
+    var audioFile: File? = null
+    var isRecording by remember { mutableStateOf(false) }
+    /*var mediaRecorder: MediaRecorder? = null
+    var audioFile: File? by remember { mutableStateOf(null) }
+
+    fun startRecording(context: Context) {
+
+        uri = ComposeFileProvider.getAudioUri(context)
+        audioFile = File(uri!!.path!!)
+
+        mediaRecorder = MediaRecorder().apply {
+            try {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setOutputFile(audioFile?.absolutePath)
+                prepare()
+                start()
+                isRecording = true
+            } catch (e: Exception) {
+                Log.e("Recording Error", "Error initializing MediaRecorder", e)
+                mediaRecorder?.release() // Liberar recursos en caso de error
+                mediaRecorder = null
+                isRecording = false
             }
         }
     }
 
-    val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
 
-            if (uri != null) {
-                uris = uris + uri // Agrega la nueva imagen a la lista cuando no es nula la uri, osea si seleccionó una pues
-                val mediaFile = MediaFile(
-                    noteTaskId = 0,
-                    filePath = uri.toString(),
-                    mediaType = MediaType.IMAGE
-                )
-                mediaFiles.add(mediaFile)
-
-                Log.d("TXT", uri.toString())
-                Log.d("Path", mediaFile.filePath)
-
+    fun stopRecording() {
+        try {
+            mediaRecorder?.apply {
+                stop()
+                release()
             }
-
+        } catch (e: Exception) {
+            Log.e("Recording Error", "Error stopping and releasing MediaRecorder", e)
+        } finally {
+            mediaRecorder = null
+            isRecording = false
         }
 
-    )
+        // Agregar el archivo de audio grabado a la lista de seleccionados
+        audioFile?.let { file ->
+            try {
+                if (context.contentResolver.getType(uri!!)?.startsWith("video/") == true) {
+                    val correctedUri = Uri.fromFile(file)
+                    viewModel.addMediaFile(
+                        filePath = correctedUri.toString(),
+                        mediaType = MediaType.AUDIO
+                    )
+                    Log.d("Last audio recorder", correctedUri.toString())
+                } else {
+                    viewModel.addMediaFile(
+                        filePath = uri.toString(),
+                        mediaType = MediaType.AUDIO
+                    )
+                    Log.d("Last audio recorder", uri.toString())
+                }
+            } catch (e: Exception) {
+                Log.e("URI Error", "Error processing the URI for audio file", e)
+            }
+        }
+    }*/
+
+
+
+    fun selectImageFromGallery(
+        context: Context,
+        launcher: ActivityResultLauncher<Intent>
+    ) {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        launcher.launch(intent)
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { contentUri ->
+
+                val mimeType = context.contentResolver.getType(contentUri)
+
+                val details = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "image_" + System.currentTimeMillis())
+                    put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
+                val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                val imageUri = context.contentResolver.insert(collection, details)
+
+                imageUri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        context.contentResolver.openInputStream(contentUri)?.use { inputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+
+                    details.clear()
+                    details.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    context.contentResolver.update(it, details, null, null)
+
+                    viewModel.addMediaFile(
+                        filePath = it.toString(),
+                        mediaType = MediaType.IMAGE
+                    )
+                    Log.d("Last image Selected", it.toString())
+                }
+            }
+        }
+    }
+
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
 
             if (success) {
-                uris = uris + uri!!
-                val mediaFile = MediaFile(
-                    noteTaskId = 0,
-                    filePath = uri!!.toString(),
+                viewModel.addMediaFile(
+                    filePath = uri.toString(),
                     mediaType = MediaType.IMAGE
                 )
-                mediaFiles.add(mediaFile)
-
-
-                Log.d("TXT", uri.toString())
-                Log.d("Path", mediaFile.filePath)
+                Log.d("Last camera captured", uri.toString())
             }
 
         }
     )
 
+
     val videoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CaptureVideo(),
         onResult = { success ->
-
             if (success) {
-                uris = uris + uri!!
-                val mediaFile = MediaFile(
-                    noteTaskId = 0,
-                    filePath = uri!!.toString(),
+                viewModel.addMediaFile(
+                    filePath = uri.toString(),
                     mediaType = MediaType.VIDEO
                 )
-                mediaFiles.add(mediaFile)
-
-                Log.d("TXT", uri.toString())
-                Log.d("Path", mediaFile.filePath)
-
+                Log.d("Last video captured", uri.toString())
             }
-
         }
     )
 
@@ -228,9 +311,10 @@ fun NoteTestScreen(
                         showRationaleDialog = true
                         permissionToRequest = cameraPermissionState
                     }else if(cameraPermissionState.status.isGranted){
-                        // El permiso ya está otorgado
+                        //
                         uri = ComposeFileProvider.getImageUri(context)
                         cameraLauncher.launch(uri!!)
+
                         showRationaleDialog = false
                     }
 
@@ -244,7 +328,8 @@ fun NoteTestScreen(
                         showRationaleDialog = true
                         permissionToRequest = readMediaPermissionState
                     }else if(readMediaPermissionState.status.isGranted){
-                        imagePicker.launch("image/*")
+                        //imagePicker.launch("image/*")
+                        selectImageFromGallery(context, galleryLauncher)
                         showRationaleDialog = false
                     }
 
@@ -258,8 +343,10 @@ fun NoteTestScreen(
                         showRationaleDialog = true
                         permissionToRequest = cameraPermissionState
                     }else if(cameraPermissionState.status.isGranted){
-                        uri = ComposeFileProvider.getImageUri(context)
+                        uri = ComposeFileProvider.getVideoUri(context)
                         videoLauncher.launch(uri!!)
+                        // Llamar al launcher
+                        //videoLauncher.launch(Intent(MediaStore.ACTION_VIDEO_CAPTURE))
                         showRationaleDialog = false
                     }
 
@@ -273,11 +360,49 @@ fun NoteTestScreen(
                         showRationaleDialog = true
                         permissionToRequest = recordAudioPermissionState
                     }else if(recordAudioPermissionState.status.isGranted){
+                        uri = ComposeFileProvider.getAudioUri(context)
+                        if (!isRecording) {
+                            //startRecording(context)
+                            File(uri!!.toString()).also {
+                                recorder.start(it)
+                                audioFile = it
+                                isRecording = true
+                            }
+                        } else {
+                            recorder.stop()
+                            isRecording = false
+                            //stopRecording()
+                        }
                         showRationaleDialog = false
                     }
 
                 }
             )
+        },
+        floatingActionButton = {
+            if (isRecording) {
+                FloatingActionButton(
+                    onClick = {
+                        recorder.stop()
+                        isRecording = false
+                        viewModel.addMediaFile(
+                            filePath = uri.toString(),
+                            mediaType = MediaType.AUDIO
+                        )
+                        Log.d("Last audio recorder", uri.toString())
+                    },
+                    shape = CircleShape,
+                    containerColor = Color.Red,
+                    contentColor = Color.White,
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Stop,
+                        contentDescription = "Detener grabación",
+                        modifier = Modifier.size(32.dp) // Aumentar el tamaño del icono
+                    )
+                }
+            }
         },
         modifier = modifier
     ) { innerPadding ->
@@ -328,92 +453,35 @@ fun NoteTestScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            if (uris.isNotEmpty()) {
-                /*val imageUris = uris.filter { mediaFile ->
-                    mediaFiles.any { it.filePath == mediaFile.toString() && it.mediaType == MediaType.IMAGE }
-                }*/
-                item {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
-                        items(uris) { uri ->
-                            Box{
-                                AsyncImage(
-                                    model = uri,
-                                    modifier = Modifier
-                                        .size(150.dp)
-                                        .padding(4.dp),
-                                    contentDescription = "Selected image",
-                                    contentScale = ContentScale.Fit
-                                )
-                                IconButton(
-                                    onClick = {
-                                        /*coroutineScope.launch {
-                                            // Buscar el MediaFile asociado al URI
-                                            val mediaFileToDelete = mediaFiles.find { it.filePath == uri.toString() }
-                                            if (mediaFileToDelete != null) {
-                                                // Eliminar de la base de datos
-                                                viewModel.removeMediaFile(mediaFileToDelete)
-                                                // Eliminar de las listas locales
-                                                mediaFiles = mediaFiles.filter { it.id != mediaFileToDelete.id }.toMutableList()
-                                                uris = uris.filter { it != uri }
-                                            }
-                                        }*/
-                                        val mediaFileToRemove = viewModel.mediaFiles.value.find { it.filePath == uri.toString() }
-                                        if (mediaFileToRemove != null) {
-                                            viewModel.removeMediaFile(mediaFileToRemove) // Eliminar de la base de datos
-                                        }
-                                        // Actualizar el estado local
-                                        uris = uris.filter { it != uri }
+            items(mediaFiles) { mediaFile ->
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    MediaItemDisplay(
+                        context = context,
+                        mediaFileItem = mediaFile
+                    )
 
-                                    },
-                                    modifier = Modifier.offset(x = 100.dp, y = (-10).dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Delete Image"
-                                    )
-                                }
-                            }
-                        }
+                    IconButton(
+                        onClick = {
+                            // Mostrar un AlertDialog para confirmar la eliminación
+                            // ...
+                            viewModel.removeMediaFile(mediaFile)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd) // Colocar en la esquina superior derecha
+                            .padding(4.dp) // Ajustar el padding
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete, // Usar un icono de "basura"
+                            contentDescription = "Eliminar archivo"
+                        )
                     }
                 }
             }
-
-            item {
-                val videoUris = uris.filter { mediaFile ->
-                    mediaFiles.any { it.filePath == mediaFile.toString() && it.mediaType == MediaType.VIDEO }
-                }
-
-                if (videoUris.isNotEmpty()) {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
-                        items(videoUris) { videoUri ->
-                            // Mostrar la vista previa del video con VideoPlayer
-                            VideoPlayer(
-                                videoUri = videoUri,
-                                modifier = Modifier
-                                    .size(150.dp) // Ajusta el tamaño según tu diseño
-                                    .padding(4.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            /*
-            item {
-                // TODO: Implementar la misma lógica de las imágenes para los videos, aunque puede cambiar para que sea algo más parecido a un reproductor con barra de progreso
-                if (hasVideo && uris.isNotEmpty()) {
-                    VideoPlayer(videoUri = uris.last())
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }*/
 
             item {
                 // Botón para guardar
@@ -421,22 +489,17 @@ fun NoteTestScreen(
                     onClick = {
                         coroutineScope.launch {
                             // Ajustes de las fechas de edición y creación
-                            if(note.id == 0){
+                            if (note.id == 0) {
                                 note.createdDate = System.currentTimeMillis()
                                 note.lastEditedDate = System.currentTimeMillis()
-                            }else{
+                            } else {
                                 note.lastEditedDate = System.currentTimeMillis()
                             }
-                            val noteId = viewModel.saveNoteTask()
 
-                            if(noteId > 0){
-                                // Guardar los MediaFiles en la base de datos
-                                mediaFiles.forEach { mediaFile ->
-                                    mediaFile.noteTaskId = noteId // Actualizar el noteTaskId
-                                    viewModel.addMediaFile(mediaFile.noteTaskId, mediaFile.filePath, mediaFile.mediaType)
-                                }
+                            val noteId = viewModel.saveNoteTask() // Guarda la nota y los archivos multimedia
 
-                                navigateBack()
+                            if (noteId > 0) {
+                                navigateBack() // Navega de regreso si la operación fue exitosa
                             }
                         }
                     },

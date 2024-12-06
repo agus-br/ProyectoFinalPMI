@@ -8,36 +8,44 @@ import java.io.File
 class ComposeFileProvider : FileProvider(
     R.xml.filepaths
 ){
-    companion object {
 
+
+    companion object {
         fun getImageUri(context: Context): Uri {
-            // 1
-            val directory = File(
-                context.cacheDir, "images"
-            )
+            val directory = File(context.cacheDir, "images")
             directory.mkdirs()
-            // 2
             val file = File.createTempFile(
                 "selected_image_",
                 ".jpg",
                 directory
             )
-            // 3
             val authority = context.packageName + ".fileprovider"
-            // 4
-            return getUriForFile(
-                context,
-                authority,
-                file,
-            )
+            return getUriForFile(context, authority, file)
         }
 
-        fun getImageUris(context: Context, numImages: Int): List<Uri> {
-            val uris = mutableListOf<Uri>()
-            repeat(numImages) {
-                uris.add(getImageUri(context))
-            }
-            return uris
+        fun getVideoUri(context: Context): Uri {
+            val directory = File(context.cacheDir, "videos")
+            directory.mkdirs()
+            val file = File.createTempFile(
+                "selected_video_",
+                ".mp4",
+                directory
+            )
+
+            val authority = context.packageName + ".fileprovider"
+            return getUriForFile(context, authority, file)
+        }
+
+        fun getAudioUri(context: Context): Uri {
+            val directory = File(context.cacheDir, "audios")
+            directory.mkdirs()
+            val file = File.createTempFile(
+                "selected_audio_",
+                ".mp3",
+                directory
+            )
+            val authority = context.packageName + ".fileprovider"
+            return getUriForFile(context, authority, file)
         }
     }
 }

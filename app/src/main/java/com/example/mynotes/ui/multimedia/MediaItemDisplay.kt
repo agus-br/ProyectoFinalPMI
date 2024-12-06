@@ -8,11 +8,14 @@ import com.example.mynotes.data.MediaType
 import com.google.android.exoplayer2.MediaItem
 
 @Composable
-fun MediaItemDisplay(context: Context, mediaFileItem: MediaFile) {
+fun MediaItemDisplay(
+    context: Context,
+    mediaFileItem: MediaFile
+) {
     when (mediaFileItem.mediaType) {
-        MediaType.IMAGE -> DisplayImage(mediaFileItem.filePath)
-        MediaType.VIDEO -> VideoPlayer(Uri.parse(mediaFileItem.filePath), context)
-        MediaType.AUDIO -> AudioPlayer(Uri.parse(mediaFileItem.filePath), context)
+        MediaType.IMAGE -> DisplayImage(Uri.parse(mediaFileItem.filePath))
+        MediaType.VIDEO -> ExoPlayerVideo(Uri.parse(mediaFileItem.filePath))
+        MediaType.AUDIO -> AudioPlayer(Uri.parse(mediaFileItem.filePath))
     }
 }
 

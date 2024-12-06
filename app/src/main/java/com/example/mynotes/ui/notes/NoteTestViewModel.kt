@@ -41,11 +41,11 @@ class NoteTestViewModel(
 
 
     init {
-        // Verificamos si estamos en modo edición (noteId != 0)
         noteId?.let {
             if (it != 0) {
                 isEditMode = true
-                loadNoteTask(it)  // Cargamos la nota para editar
+                loadNoteTask(it)
+                loadMediaFiles(it)
             }
         }
     }
@@ -57,7 +57,9 @@ class NoteTestViewModel(
         )
     }
 
-    private fun loadNoteTask(noteTaskId: Int) {
+    private fun loadNoteTask(
+        noteTaskId: Int
+    ) {
         viewModelScope.launch {
             noteTask = repository.getNoteTaskByIdStream(noteTaskId)
                 .filterNotNull()
@@ -71,16 +73,30 @@ class NoteTestViewModel(
 
 
     suspend fun saveNoteTask(): Int {
-        var noteIdResult = 0
         if (validateInput()) {
-            if (isEditMode) {
-                repository.updateNoteTask(noteTask)  // Editamos la nota
-                noteIdResult = noteTask.id
-            } else {
-                noteIdResult = repository.insertNoteTask(noteTask).toInt()  // Creamos una nueva nota
+            try {
+                val noteIdResult = if (isEditMode) {
+                    repository.updateNoteTask(noteTask)
+                    noteTask.id
+                } else {
+                    repository.insertNoteTask(noteTask)
+                }
+
+                if (!isEditMode) { // Solo inserta si NO es modo edición
+                    _mediaFiles.value.forEach { mediaFile ->
+                        repository.insertMediaFile(mediaFile.copy(noteTaskId = noteIdResult))
+                    }
+                }
+
+                return noteIdResult
+            } catch (e: Exception) {
+                // Manejar la excepción, por ejemplo, mostrar un mensaje de error al usuario
+                return 0 // o algún valor que indique un error
             }
+        } else {
+            // Manejar la validación fallida, por ejemplo, mostrar un mensaje al usuario
+            return 0 // o algún valor que indique un error
         }
-        return noteIdResult
     }
 
     fun deleteNoteTask() {
@@ -90,39 +106,51 @@ class NoteTestViewModel(
     }
 
 
-    //  MÉTODOS PARA EL MANEJO DE MULTIMEDIA
+    // TODO MÉTODOS PARA LOS MEDIAFILES
 
-    // Flujos para observar los archivos multimedia
+
     private val _mediaFiles = MutableStateFlow<List<MediaFile>>(emptyList())
-
     val mediaFiles: StateFlow<List<MediaFile>> = _mediaFiles
 
-    fun loadMediaFiles(noteTaskId: Int) {
+    private fun loadMediaFiles(noteTaskId: Int) {
         viewModelScope.launch {
-            repository.getMediaFilesByNoteTaskIdStream(noteTaskId).collect { files ->
-                _mediaFiles.value = files
+            val files = repository.getMediaFilesByNoteTaskIdStream(noteTaskId)
+                .filterNotNull()
+                .first()
+            _mediaFiles.value = files
+        }
+    }
+
+    fun addMediaFile(
+        filePath: String,
+        mediaType: MediaType
+    ) {
+        viewModelScope.launch {
+            val newMediaFile = MediaFile(
+                noteTaskId = if (isEditMode) noteTask.id else 0,
+                filePath = filePath,
+                mediaType = mediaType
+            )
+
+            if (isEditMode) {
+                val mediaFileId = repository.insertMediaFile(newMediaFile)
+                _mediaFiles.value = _mediaFiles.value + newMediaFile.copy(id = mediaFileId)
+            } else {
+                _mediaFiles.value = _mediaFiles.value + newMediaFile
             }
         }
     }
 
-    fun addMediaFile(noteId: Int, filePath: String, mediaType: MediaType) {
+    fun removeMediaFile(
+        mediaFile: MediaFile
+    ) {
         viewModelScope.launch {
-            repository.insertMediaFile(
-                MediaFile(
-                    noteTaskId = noteId, // Usar el noteId recibido
-                    filePath = filePath,
-                    mediaType = mediaType
-                )
-            )
-            loadMediaFiles(noteId) // Recargar la lista
+            if (isEditMode) {
+                repository.deleteMediaFile(mediaFile)
+            }
+            _mediaFiles.value = _mediaFiles.value - mediaFile
         }
     }
 
-    fun removeMediaFile(mediaFile: MediaFile) {
-        viewModelScope.launch {
-            repository.deleteMediaFile(mediaFile)
-            loadMediaFiles(noteTask.id) // Recargar la lista
-        }
-    }
 
 }

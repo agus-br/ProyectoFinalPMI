@@ -437,27 +437,7 @@ fun AddEditTaskScreen(
                 }
             }
 
-            item {
-                val videoUris = uris.filter { mediaFile ->
-                    mediaFiles.any { it.filePath == mediaFile.toString() && it.mediaType == MediaType.VIDEO }
-                }
-
-                if (videoUris.isNotEmpty()) {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
-                        items(videoUris) { videoUri ->
-                            // Mostrar la vista previa del video con VideoPlayer
-                            ExoPlayerVideo(
-                                context = context,
-                                uri = videoUri
-                            )
-                        }
-                    }
-                }
-            }
+            //VideoPlayer(videoUri = uris.last())
 
             /*
             // TODO: Implementar la misma lógica de las imágenes para los videos, aunque puede cambiar para que sea algo más parecido a un reproductor con barra de progreso

@@ -51,8 +51,9 @@ class OfflineNoteTaskRepository(
     override fun getMediaFilesByNoteTaskIdStream(noteTaskId: Int): Flow<List<MediaFile>> =
         mediaFileDao.getMediaFilesByNoteTaskId(noteTaskId)
 
-    override suspend fun insertMediaFile(mediaFile: MediaFile) {
-        mediaFileDao.insert(mediaFile)
+    override suspend fun insertMediaFile(mediaFile: MediaFile): Int {
+        val mediaFileId = mediaFileDao.insert(mediaFile)
+        return mediaFileId.toInt()
     }
 
     override suspend fun deleteMediaFile(mediaFile: MediaFile) {
